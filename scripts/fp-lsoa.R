@@ -43,6 +43,7 @@ fuel10 <- merge(fuel10, urmsoa, by = "MSOA11CD")
 rm(urmsoa)
 fuel10$pfphh <- (fuel10$fphh / fuel10$households) * 100
 fuel10 <- subset(fuel10, select = -households)
+View(fuel10[which(fuel10$pfphh > 100), ])
 
 # map LADs and top quintile of fuel poor households
 # LADs layer for context
