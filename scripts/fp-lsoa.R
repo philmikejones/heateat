@@ -1,6 +1,6 @@
 # Libraries ====
-require("maptools")
 require("rgeos")
+require("maptools")
 require("rgdal")
 require("scales")
 require("deldir")
@@ -11,9 +11,12 @@ require("ggplot2")
 # Fuel poverty and food bank location maps
 # fuel10 ====
 fuel10 <- read.csv("data/fp10.csv", skip = 2, header = T)
+write.table(fuel10[fuel10$Estimated.number.of.households < fuel10$Estimated.number.of.Fuel.Poor.Households, ],
+            "fphh-incorrect.csv", sep="\t")
 lmlu   <- read.csv("data/OA11_LSOA11_MSOA11_LAD11_EW_LUv2.csv", header = T)
 lmlu   <- subset(lmlu, select = c("LSOA11CD", "MSOA11CD"))
 lmlu   <- unique(lmlu)
+# 32,844 fuel10; 34,753 lmlu LSOAs - includes Wales?
 fuel10 <- merge(fuel10, lmlu, by.x = "LSOA.Code", by.y = "LSOA11CD")
 rm(lmlu)
 
@@ -34,8 +37,10 @@ for(i in 1:NROW(msoas)){
     sum(fuel10$Estimated.number.of.Fuel.Poor.Households[fuel10$MSOA11CD == msoas[i]])
 }
 
-fuel10 <- subset(fuel10, select = c("MSOA11CD", "households", "fphh"))
-fuel10 <- unique(fuel10)
+View(fuel10[fuel10$fphh > fuel10$households, ])
+
+fuel10u <- subset(fuel10, select = c("MSOA11CD", "households", "fphh"))
+fuel10u <- unique(fuel10u)
 rm(i, msoas)
 
 urmsoa <- read.csv("data/RUC11_MSOA11_EW.csv", header = T)
@@ -44,6 +49,7 @@ rm(urmsoa)
 fuel10$pfphh <- (fuel10$fphh / fuel10$households) * 100
 fuel10 <- subset(fuel10, select = -households)
 View(fuel10[which(fuel10$pfphh > 100), ])
+fuel10[which(fuel10$households < 50), ]
 
 # map LADs and top quintile of fuel poor households
 # LADs layer for context
