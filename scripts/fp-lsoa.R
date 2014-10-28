@@ -17,6 +17,27 @@ lmlu   <- unique(lmlu)
 fuel10 <- merge(fuel10, lmlu, by.x = "LSOA.Code", by.y = "LSOA11CD")
 rm(lmlu)
 
+fuel10$Estimated.number.of.households <- 
+  as.numeric(fuel10$Estimated.number.of.households)
+msoas <- unique(fuel10$MSOA11CD)
+fuel10$households <- NA
+for(i in 1:NROW(msoas)){
+  fuel10$households[fuel10$MSOA11CD == msoas[i]] <-
+    sum(fuel10$Estimated.number.of.households[fuel10$MSOA11CD == msoas[i]])
+}
+
+fuel10$Estimated.number.of.Fuel.Poor.Households <- 
+  as.numeric(fuel10$Estimated.number.of.Fuel.Poor.Households)
+fuel10$fphh <- NA
+for(i in 1:NROW(msoas)){
+  fuel10$fphh[fuel10$MSOA11CD == msoas[i]] <-
+    sum(fuel10$Estimated.number.of.Fuel.Poor.Households[fuel10$MSOA11CD == msoas[i]])
+}
+
+
+fuel10$households[1] <- sum(fuel10$Estimated.number.of.households[fuel10$MSOA11CD])
+fuel
+NROW(msoas)
 
 
 
