@@ -1,4 +1,5 @@
 /data
 .Rproj.user
 .RData
+.R*
 *.pdf

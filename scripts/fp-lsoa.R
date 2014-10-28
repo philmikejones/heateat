@@ -1,3 +1,13 @@
+# Libraries ====
+require("maptools")
+require("rgeos")
+require("rgdal")
+require("scales")
+require("deldir")
+require("ggplot2")
+
+
+
 # Prepare FP/RU data ====
 # Two different fuel poverty definitions, 10% and 'Low Income High Cost'
 # Treat each separately
@@ -25,29 +35,61 @@ fplihc <- subset(fplihc, select = c("LSOA.Code",
 #                    RUC11CD == "E1" | RUC11CD == "E2")
 rm(ru)
 
-# Libraries ====
-require("maptools")
-require("rgeos")
-require("rgdal")
-require("scales")
-require("ggplot2")
 
-# Food bank map ====
+
+# Food bank maps ====
 elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
                 "england_lad_2011Polygon")
+wlad <- readOGR(dsn = "../../Boundary Data/LADs/walesLADs", 
+                "wales_lad_2011Polygon")
+slad <- readOGR(dsn = "../../Boundary Data/LADs/scotland-council-areas-2010",
+                "scotland_ca_2010_05")
 proj4string(elad) <- CRS("+init=epsg:27700")
+proj4string(wlad) <- CRS("+init=epsg:27700")
+proj4string(slad) <- CRS("+init=epsg:27700")
+
+fb <- read.csv("data/foodbanks-matched.csv")
+
 eladf <- fortify(elad, region = "code")
 eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
+wladf <- fortify(wlad, region = "code")
+wladf <- merge(wladf, wlad@data, by.x = "id", by.y = "code")
+sladf <- fortify(slad, region = "code")
+sladf <- merge(sladf, slad@data, by.x = "id", by.y = "code")
 
-e <- ggplot(eladf, aes(long, lat, group = group))
-e + geom_polygon(fill = "transparent", colour = "black") + coord_equal()
+vp  <- deldir(fb$OSEAST1M10nov, fb$OSNRTH1M10nov)
+
+ggplot() + 
+  geom_polygon(data = eladf, aes(long, lat, group = group), 
+               fill = "transparent", colour = "light grey") +
+  geom_polygon(data = wladf, aes(long, lat, group = group),
+               fill = "transparent", colour = "light grey") +
+  geom_polygon(data = sladf, aes(long, lat, group = group),
+               fill = "transparent", colour = "light grey") +
+  geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = input_row)) +
+  geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2)) + 
+  coord_equal()
+
+rm(elad, slad, wlad, eladf, sladf, wladf, vp, e, fb)
 
 
 
-
+# Fuel poverty priority LSOAs ====
 lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
                 "england_lsoa_2011Polygon")
 proj4string(lsoa) <- CRS("+init=epsg:27700")
+
+fpp           <- read.csv("data/fp-priority-lsoa.csv")
+lsoa$code     <- as.character(lsoa$code)
+fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
+lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
+lsoaf         <- fortify(lsoa, region = "code")
+lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+f <- ggplot(lsoaf, aes(long, lat, group = group, fill = priority))
+f + geom_polygon() + coord_equal()
+
+
 lsoa@data <- merge(lsoa@data, fp10, by.x = "code", by.y = "LSOA.Code")
 lsoaf <- fortify(lsoa, region = "code")
 lsoaf <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
