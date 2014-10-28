@@ -34,10 +34,9 @@ for(i in 1:NROW(msoas)){
     sum(fuel10$Estimated.number.of.Fuel.Poor.Households[fuel10$MSOA11CD == msoas[i]])
 }
 
+fuel10 <- subset(fuel10, select = c("MSOA11CD", "households", "fphh"))
+fuel10 <- unique(fuel10)
 
-fuel10$households[1] <- sum(fuel10$Estimated.number.of.households[fuel10$MSOA11CD])
-fuel
-NROW(msoas)
 
 
 
