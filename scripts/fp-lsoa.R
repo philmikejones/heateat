@@ -45,6 +45,7 @@ fuel10$pfphh <- (fuel10$fphh / fuel10$households) * 100
 fuel10 <- subset(fuel10, select = -households)
 
 # map LADs and top quintile of fuel poor households
+# LADs layer for context
 elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
                 "england_lad_2011Polygon")
 proj4string(elad) <- CRS("+init=epsg:27700")
@@ -53,6 +54,12 @@ eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
 rm(elad)
 llad <- geom_polygon(data = eladf, aes(long, lat, group = group), 
                      fill = "transparent", colour = "light grey")
+# MSOA layer
+emsoa <- readOGR(dsn = "../../Boundary Data/MSOAs/England", "England_msoa_2011")
+emsoa@data <- merge(emsoa@data, fuel10, by.x = "CODE", by.y = "MSOA11CD")
+emsoaf <- fortify(emsoa, region = "CODE")
+emsoaf <- merge(emsoaf, emsoa@data, by.x = "id", by.y = "CODE")
+
 
 ggplot() + llad + coord_equal()
 
