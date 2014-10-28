@@ -8,32 +8,45 @@ require("ggplot2")
 
 
 
+# Fuel poverty and food bank location maps
+# fuel10 ====
+fuel10 <- read.csv("data/fp10.csv", skip = 2, header = T)
+lmlu   <- read.csv("data/OA11_LSOA11_MSOA11_LAD11_EW_LUv2.csv", header = T)
+lmlu   <- subset(lmlu, select = c("LSOA11CD", "MSOA11CD"))
+lmlu   <- unique(lmlu)
+fuel10 <- merge(fuel10, lmlu, by.x = "LSOA.Code", by.y = "LSOA11CD")
+rm(lmlu)
+
+
+
+
+
 # Prepare FP/RU data ====
 # Two different fuel poverty definitions, 10% and 'Low Income High Cost'
 # Treat each separately
 fp10   <- read.csv("data/fp10.csv", skip = 2, header = T)
 fplihc <- read.csv("data/fplihc.csv", skip = 2, header = T)
 
-# merge in rural classification
-ru <- read.csv("data/RUC11_LSOA11_EW.csv", header = T)
-
-fp10 <- merge(fp10, ru, by.x = "LSOA.Code", by.y = "LSOA11CD")
-fp10 <- subset(fp10, select = c("LSOA.Code", "Estimated.number.of.households",
-                                "Estimated.number.of.Fuel.Poor.Households",
-                                "RUC11CD", "RUC11"))
-
-fplihc <- merge(fplihc, ru, by.x = "LSOA.Code", by.y = "LSOA11CD")
-fplihc <- subset(fplihc, select = c("LSOA.Code", 
-                                    "Estimated.number.of.households", 
-                                    "Estimated.number.of.Fuel.Poor.Households",
-                                    "RUC11CD",  "RUC11"))
+# # merge in rural classification
+# ru <- read.csv("data/RUC11_LSOA11_EW.csv", header = T)
+# 
+# fp10 <- merge(fp10, ru, by.x = "LSOA.Code", by.y = "LSOA11CD")
+# fp10 <- subset(fp10, select = c("LSOA.Code", "Estimated.number.of.households",
+#                                 "Estimated.number.of.Fuel.Poor.Households",
+#                                 "RUC11CD", "RUC11"))
+# 
+# fplihc <- merge(fplihc, ru, by.x = "LSOA.Code", by.y = "LSOA11CD")
+# fplihc <- subset(fplihc, select = c("LSOA.Code", 
+#                                     "Estimated.number.of.households", 
+#                                     "Estimated.number.of.Fuel.Poor.Households",
+#                                     "RUC11CD",  "RUC11"))
 
 # Remove urban areas?
 # fp10 <- subset(fp10, RUC11CD == "D1" | RUC11CD == "D2" | 
 #                  RUC11CD == "E1" | RUC11CD == "E2")
 # fplihc <- subset(fplihc, RUC11CD == "D1" | RUC11CD == "D2" | 
 #                    RUC11CD == "E1" | RUC11CD == "E2")
-rm(ru)
+# rm(ru)
 
 
 
