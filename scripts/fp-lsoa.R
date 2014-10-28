@@ -36,8 +36,42 @@ for(i in 1:NROW(msoas)){
 
 fuel10 <- subset(fuel10, select = c("MSOA11CD", "households", "fphh"))
 fuel10 <- unique(fuel10)
+rm(i, msoas)
+
+urmsoa <- read.csv("data/RUC11_MSOA11_EW.csv", header = T)
+fuel10 <- merge(fuel10, urmsoa, by = "MSOA11CD")
+rm(urmsoa)
+fuel10$pfphh <- (fuel10$fphh / fuel10$households) * 100
+fuel10 <- subset(fuel10, select = -households)
+
+# map LADs and top quintile of fuel poor households
+elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
+                "england_lad_2011Polygon")
+proj4string(elad) <- CRS("+init=epsg:27700")
+eladf <- fortify(elad, region = "code")
+eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
+rm(elad)
+llad <- geom_polygon(data = eladf, aes(long, lat, group = group), 
+                     fill = "transparent", colour = "light grey")
+
+ggplot() + llad + coord_equal()
 
 
+
+
+lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
+                "england_lsoa_2011Polygon")
+proj4string(lsoa) <- CRS("+init=epsg:27700")
+
+fpp           <- read.csv("data/fp-priority-lsoa.csv")
+lsoa$code     <- as.character(lsoa$code)
+fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
+lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
+lsoaf         <- fortify(lsoa, region = "code")
+lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+f <- ggplot(lsoaf, aes(long, lat, group = group, fill = priority))
+f + geom_polygon() + coord_equal()
 
 
 
