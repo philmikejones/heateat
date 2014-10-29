@@ -3,10 +3,59 @@ require("rgeos")
 require("maptools")
 require("rgdal")
 require("scales")
-require("deldir")
+require("deldir")  # for voronoi polygons
 require("ggplot2")
 
 
+
+# Map background ====
+# LAD layer for context
+elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
+                "england_lad_2011Polygon")
+proj4string(elad) <- CRS("+init=epsg:27700")
+eladf <- fortify(elad, region = "code")
+eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
+rm(elad)
+llad <- geom_polygon(data = eladf, aes(long, lat, group = group), 
+                     fill = "transparent", colour = "light grey")
+
+ggplot() + llad + coord_equal()
+
+
+
+# Food bank layer ====
+fb <- read.csv("data/foodbanks-matched.csv")
+
+eladf <- fortify(elad, region = "code")
+eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
+wladf <- fortify(wlad, region = "code")
+wladf <- merge(wladf, wlad@data, by.x = "id", by.y = "code")
+sladf <- fortify(slad, region = "code")
+sladf <- merge(sladf, slad@data, by.x = "id", by.y = "code")
+
+vp  <- deldir(fb$OSEAST1M10nov, fb$OSNRTH1M10nov)
+
+ggplot() + 
+  geom_polygon(data = eladf, aes(long, lat, group = group), 
+               fill = "transparent", colour = "light grey") +
+  geom_polygon(data = wladf, aes(long, lat, group = group),
+               fill = "transparent", colour = "light grey") +
+  geom_polygon(data = sladf, aes(long, lat, group = group),
+               fill = "transparent", colour = "light grey") +
+  geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = input_row)) +
+  geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2)) + 
+  coord_equal()
+
+rm(elad, slad, wlad, eladf, sladf, wladf, vp, e, fb)
+
+
+
+# Fuel poverty layer ====
+# MSOA layer
+emsoa <- readOGR(dsn = "../../Boundary Data/MSOAs/England", "England_msoa_2011")
+emsoa@data <- merge(emsoa@data, fuel10, by.x = "CODE", by.y = "MSOA11CD")
+emsoaf <- fortify(emsoa, region = "CODE")
+emsoaf <- merge(emsoaf, emsoa@data, by.x = "id", by.y = "CODE")
 
 # Fuel poverty and food bank location maps
 # fuel10 ====
@@ -57,41 +106,24 @@ fuel10 <- subset(fuel10, select = -households)
 View(fuel10[which(fuel10$pfphh > 100), ])
 fuel10[which(fuel10$households < 50), ]
 
-# map LADs and top quintile of fuel poor households
-# LADs layer for context
-elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
-                "england_lad_2011Polygon")
-proj4string(elad) <- CRS("+init=epsg:27700")
-eladf <- fortify(elad, region = "code")
-eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
-rm(elad)
-llad <- geom_polygon(data = eladf, aes(long, lat, group = group), 
-                     fill = "transparent", colour = "light grey")
-# MSOA layer
-emsoa <- readOGR(dsn = "../../Boundary Data/MSOAs/England", "England_msoa_2011")
-emsoa@data <- merge(emsoa@data, fuel10, by.x = "CODE", by.y = "MSOA11CD")
-emsoaf <- fortify(emsoa, region = "CODE")
-emsoaf <- merge(emsoaf, emsoa@data, by.x = "id", by.y = "CODE")
-
-
-ggplot() + llad + coord_equal()
 
 
 
 
-lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
-                "england_lsoa_2011Polygon")
-proj4string(lsoa) <- CRS("+init=epsg:27700")
 
-fpp           <- read.csv("data/fp-priority-lsoa.csv")
-lsoa$code     <- as.character(lsoa$code)
-fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
-lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
-lsoaf         <- fortify(lsoa, region = "code")
-lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
-
-f <- ggplot(lsoaf, aes(long, lat, group = group, fill = priority))
-f + geom_polygon() + coord_equal()
+# lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
+#                 "england_lsoa_2011Polygon")
+# proj4string(lsoa) <- CRS("+init=epsg:27700")
+# 
+# fpp           <- read.csv("data/fp-priority-lsoa.csv")
+# lsoa$code     <- as.character(lsoa$code)
+# fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
+# lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
+# lsoaf         <- fortify(lsoa, region = "code")
+# lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
+# 
+# f <- ggplot(lsoaf, aes(long, lat, group = group, fill = priority))
+# f + geom_polygon() + coord_equal()
 
 
 
@@ -124,40 +156,7 @@ fplihc <- read.csv("data/fplihc.csv", skip = 2, header = T)
 
 
 
-# Food bank maps ====
-elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
-                "england_lad_2011Polygon")
-wlad <- readOGR(dsn = "../../Boundary Data/LADs/walesLADs", 
-                "wales_lad_2011Polygon")
-slad <- readOGR(dsn = "../../Boundary Data/LADs/scotland-council-areas-2010",
-                "scotland_ca_2010_05")
-proj4string(elad) <- CRS("+init=epsg:27700")
-proj4string(wlad) <- CRS("+init=epsg:27700")
-proj4string(slad) <- CRS("+init=epsg:27700")
 
-fb <- read.csv("data/foodbanks-matched.csv")
-
-eladf <- fortify(elad, region = "code")
-eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
-wladf <- fortify(wlad, region = "code")
-wladf <- merge(wladf, wlad@data, by.x = "id", by.y = "code")
-sladf <- fortify(slad, region = "code")
-sladf <- merge(sladf, slad@data, by.x = "id", by.y = "code")
-
-vp  <- deldir(fb$OSEAST1M10nov, fb$OSNRTH1M10nov)
-
-ggplot() + 
-  geom_polygon(data = eladf, aes(long, lat, group = group), 
-               fill = "transparent", colour = "light grey") +
-  geom_polygon(data = wladf, aes(long, lat, group = group),
-               fill = "transparent", colour = "light grey") +
-  geom_polygon(data = sladf, aes(long, lat, group = group),
-               fill = "transparent", colour = "light grey") +
-  geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = input_row)) +
-  geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2)) + 
-  coord_equal()
-
-rm(elad, slad, wlad, eladf, sladf, wladf, vp, e, fb)
 
 
 
