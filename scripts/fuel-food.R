@@ -68,18 +68,21 @@ urmsoa <- read.csv("data/RUC11_MSOA11_EW.csv", header = T)
 lihc   <- merge(lihc, urmsoa, by = "MSOA11CD")
 rm(urmsoa, msoahh)
 
-lihc <- subset(lihc, pfphh >= quantile(pfphh, 0.75))
+lihc <- subset(lihc, pfphh >= quantile(pfphh, 0.8))
 
 # MSOA layer
 emsoa <- readOGR(dsn = "../../Boundary Data/MSOAs/England", "England_msoa_2011")
-emsoa@data <- merge(emsoa@data, lihc, by.x = "CODE", by.y = "MSOA11CD")
 emsoaf <- fortify(emsoa, region = "CODE")
 emsoaf <- merge(emsoaf, emsoa@data, by.x = "id", by.y = "CODE")
-
+rm(emsoa)
+emsoaf <- merge(emsoaf, lihc, by.x = "id", by.y = "MSOA11CD")
+fq <- geom_polygon(data = emsoaf, aes(long, lat, group = group), 
+                                      fill = "red")
+ggplot() + fq + llad + coord_equal()
 
 
 # Final map ====
-ggplot() + llad + fbloc + vpm + coord_equal()
+ggplot() + llad + fbloc + vpm + fq + coord_equal()
 
 
 
