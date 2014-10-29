@@ -19,34 +19,17 @@ rm(elad)
 llad <- geom_polygon(data = eladf, aes(long, lat, group = group), 
                      fill = "transparent", colour = "light grey")
 
-ggplot() + llad + coord_equal()
-
 
 
 # Food bank layer ====
-fb <- read.csv("data/foodbanks-matched.csv")
+fb    <- read.csv("data/foodbanks-matched.csv")
+fbloc <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov))
 
-eladf <- fortify(elad, region = "code")
-eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
-wladf <- fortify(wlad, region = "code")
-wladf <- merge(wladf, wlad@data, by.x = "id", by.y = "code")
-sladf <- fortify(slad, region = "code")
-sladf <- merge(sladf, slad@data, by.x = "id", by.y = "code")
-
+# Voronoi polygon layer ====
 vp  <- deldir(fb$OSEAST1M10nov, fb$OSNRTH1M10nov)
+vpm <- geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2))
 
-ggplot() + 
-  geom_polygon(data = eladf, aes(long, lat, group = group), 
-               fill = "transparent", colour = "light grey") +
-  geom_polygon(data = wladf, aes(long, lat, group = group),
-               fill = "transparent", colour = "light grey") +
-  geom_polygon(data = sladf, aes(long, lat, group = group),
-               fill = "transparent", colour = "light grey") +
-  geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = input_row)) +
-  geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2)) + 
-  coord_equal()
-
-rm(elad, slad, wlad, eladf, sladf, wladf, vp, e, fb)
+ggplot() + llad + fbloc + vpm + coord_equal()
 
 
 
