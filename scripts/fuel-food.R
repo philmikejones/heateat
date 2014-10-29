@@ -61,17 +61,18 @@ msoahh <- read.csv("data/eng-msoa-households.csv")
 msoahh <- subset(msoahh, select = c("geography.code", 
                                     "Tenure..All.households..measures..Value"))
 lihc   <- merge(lihc, msoahh, by.x = "MSOA11CD", by.y = "geography.code")
+lihc$pfphh <- NA
+lihc$pfphh <- (lihc$fphh / lihc$Tenure..All.households..measures..Value) * 100
 
 urmsoa <- read.csv("data/RUC11_MSOA11_EW.csv", header = T)
-fuel10 <- merge(fuel10, urmsoa, by = "MSOA11CD")
-rm(urmsoa)
-fuel10$pfphh <- (fuel10$fphh / fuel10$households) * 100
+lihc   <- merge(lihc, urmsoa, by = "MSOA11CD")
+rm(urmsoa, msoahh)
 
-
+lihc <- subset(lihc, pfphh >= quantile(pfphh, 0.75))
 
 # MSOA layer
 emsoa <- readOGR(dsn = "../../Boundary Data/MSOAs/England", "England_msoa_2011")
-emsoa@data <- merge(emsoa@data, fuel10, by.x = "CODE", by.y = "MSOA11CD")
+emsoa@data <- merge(emsoa@data, lihc, by.x = "CODE", by.y = "MSOA11CD")
 emsoaf <- fortify(emsoa, region = "CODE")
 emsoaf <- merge(emsoaf, emsoa@data, by.x = "id", by.y = "CODE")
 
