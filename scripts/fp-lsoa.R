@@ -10,6 +10,12 @@ require("ggplot2")
 
 # Fuel poverty and food bank location maps
 # fuel10 ====
+fuellihc <- read.csv("data/fplihc.csv", skip = 2, header = T)
+write.table(fuellihc[fuellihc$Estimated.number.of.households < fuellihc$Estimated.number.of.Fuel.Poor.Households, ],
+            "fplihchh-incorrect.csv", sep="\t")
+fuellihc$Estimated.number.of.households <- as.numeric(fuellihc$Estimated.number.of.households)
+fuellihc$Estimated.number.of.Fuel.Poor.Households <- as.numeric(fuellihc$Estimated.number.of.Fuel.Poor.Households)
+
 fuel10 <- read.csv("data/fp10.csv", skip = 2, header = T)
 write.table(fuel10[fuel10$Estimated.number.of.households < fuel10$Estimated.number.of.Fuel.Poor.Households, ],
             "fphh-incorrect.csv", sep="\t")
