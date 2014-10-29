@@ -44,35 +44,30 @@ lmlu <- unique(lmlu)
 
 lihc <- merge(lihc, lmlu, by.x = "LSOA.Code", by.y = "LSOA11CD")
 rm(lmlu)
+
 msoas <- unique(lihc$MSOA11CD)
-
-fuel10$households <- NA
+lihc$Estimated.number.of.Fuel.Poor.Households <- 
+  as.numeric(lihc$Estimated.number.of.Fuel.Poor.Households)
+lihc$fphh <- NA
 for(i in 1:NROW(msoas)){
-  fuel10$households[fuel10$MSOA11CD == msoas[i]] <-
-    sum(fuel10$Estimated.number.of.households[fuel10$MSOA11CD == msoas[i]])
+  lihc$fphh[lihc$MSOA11CD == msoas[i]] <-
+    sum(lihc$Estimated.number.of.Fuel.Poor.Households[lihc$MSOA11CD == msoas[i]])
 }
-
-fuel10$Estimated.number.of.Fuel.Poor.Households <- 
-  as.numeric(fuel10$Estimated.number.of.Fuel.Poor.Households)
-fuel10$fphh <- NA
-for(i in 1:NROW(msoas)){
-  fuel10$fphh[fuel10$MSOA11CD == msoas[i]] <-
-    sum(fuel10$Estimated.number.of.Fuel.Poor.Households[fuel10$MSOA11CD == msoas[i]])
-}
-
-View(fuel10[fuel10$fphh > fuel10$households, ])
-
-fuel10u <- subset(fuel10, select = c("MSOA11CD", "households", "fphh"))
-fuel10u <- unique(fuel10u)
+lihc <- subset(lihc, select = c("MSOA11CD", "fphh"))
+lihc <- unique(lihc)
 rm(i, msoas)
+
+msoahh <- read.csv("data/eng-msoa-households.csv")
+msoahh <- subset(msoahh, select = c("geography.code", 
+                                    "Tenure..All.households..measures..Value"))
+lihc   <- merge(lihc, msoahh, by.x = "MSOA11CD", by.y = "geography.code")
 
 urmsoa <- read.csv("data/RUC11_MSOA11_EW.csv", header = T)
 fuel10 <- merge(fuel10, urmsoa, by = "MSOA11CD")
 rm(urmsoa)
 fuel10$pfphh <- (fuel10$fphh / fuel10$households) * 100
-fuel10 <- subset(fuel10, select = -households)
-View(fuel10[which(fuel10$pfphh > 100), ])
-fuel10[which(fuel10$households < 50), ]
+
+
 
 # MSOA layer
 emsoa <- readOGR(dsn = "../../Boundary Data/MSOAs/England", "England_msoa_2011")
