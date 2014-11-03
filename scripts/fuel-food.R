@@ -104,26 +104,25 @@ vpm <- geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2))
 
 # Priority LSOAs ====
 # commented out because it takes bloody ages
-# lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
-#                 "england_lsoa_2011Polygon")
-# proj4string(lsoa) <- CRS("+init=epsg:27700")
-# 
-# fpp           <- read.csv("data/fp-priority-lsoa.csv")
-# lsoa$code     <- as.character(lsoa$code)
-# fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
-# lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
-# lsoaf         <- fortify(lsoa, region = "code")
-# lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
-# 
-# plsoa <- geom_polygon(data = lsoaf, aes(long, lat, group = group, 
-# fill = priority))
+lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
+                "england_lsoa_2011Polygon")
+proj4string(lsoa) <- CRS("+init=epsg:27700")
+
+fpp           <- read.csv("data/fp-priority-lsoa.csv")
+lsoa$code     <- as.character(lsoa$code)
+fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
+lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
+lsoaf         <- fortify(lsoa, region = "code")
+lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+plsoa <- geom_polygon(data = lsoaf, aes(long, lat, group = group, 
+fill = priority))
 
 
 
 # Final map ====
 ggplot() + llad + fbl + scale_colour_manual(values = c("black", "light grey")) +
-  vpm + coord_equal()
-# + plsoa
+  vpm + coord_equal() + plsoa
 # + qmsoa
 
-ggsave("fb-fp.pdf", width = 21/2.54, height = 29.7/2.54)
+ggsave("fb-fp-lsoa.pdf", width = 21/2.54, height = 29.7/2.54)
