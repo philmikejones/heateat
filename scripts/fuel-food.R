@@ -70,15 +70,14 @@ rm(urmsoa, msoahh)
 
 lihc <- subset(lihc, pfphh >= quantile(pfphh, 0.8))
 
-# MSOA layer
 emsoa <- readOGR(dsn = "../../Boundary Data/MSOAs/England", "England_msoa_2011")
 emsoaf <- fortify(emsoa, region = "CODE")
 emsoaf <- merge(emsoaf, emsoa@data, by.x = "id", by.y = "CODE")
-rm(emsoa)
 emsoaf <- merge(emsoaf, lihc, by.x = "id", by.y = "MSOA11CD")
+rm(emsoa, lihc)
 fq <- geom_polygon(data = emsoaf, aes(long, lat, group = group), 
                                       fill = "red")
-ggplot() + fq + llad + coord_equal()
+
 
 
 # Final map ====
