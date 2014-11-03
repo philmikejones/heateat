@@ -43,7 +43,8 @@ which(fb$ru == "rural")
 
 fbl <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
                                  size = Total, colour = ru))
-ggplot() + llad + fbl + coord_equal()
+ggplot() + llad + fbl + scale_colour_manual(values = c("black", "light grey")) +
+  coord_equal()
 
 
 # Voronoi polygon layer ====
