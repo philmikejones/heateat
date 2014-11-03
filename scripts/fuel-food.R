@@ -26,9 +26,24 @@ fbt <- read.csv("data/foodbanks.csv")
 fbm <- read.csv("data/foodbanks-matched.csv")
 fb  <- merge(fbt, fbm, by = "match")
 rm(fbt, fbm)
+fb <- fb[fb$URINDEW10nov != 9, ]  # 9 is Scotland/NI/Channel Is/IoM, see docs
 
-fbl <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match))
-ggplot() + fbl + llad + coord_equal()
+# Simplify urban/rural classification
+fb$ru <- NA
+fb$ru[fb$URINDEW10nov == 1] <- "urban"
+fb$ru[fb$URINDEW10nov == 2] <- "urban"
+fb$ru[fb$URINDEW10nov == 3] <- "urban"
+fb$ru[fb$URINDEW10nov == 5] <- "urban"
+fb$ru[fb$URINDEW10nov == 6] <- "urban"
+fb$ru[fb$URINDEW10nov == 7] <- "urban"
+
+fb$ru[fb$URINDEW10nov == 4] <- "rural"
+fb$ru[fb$URINDEW10nov == 8] <- "rural"
+which(fb$ru == "rural")
+
+fbl <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
+                                 size = Total, colour = ru))
+ggplot() + llad + fbl + coord_equal()
 
 
 # Voronoi polygon layer ====
