@@ -22,8 +22,11 @@ llad <- geom_polygon(data = eladf, aes(long, lat, group = group),
 
 
 # Food bank layer ====
-fb    <- read.csv("data/foodbanks-matched.csv")
-fbloc <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov))
+fbt <- read.csv("data/foodbanks.csv")
+fbm <- read.csv("data/foodbanks-matched.csv")
+fb  <- merge(fbt, fbm, by = "match")
+rm(fbt, fbm)
+
 
 # Voronoi polygon layer ====
 vp  <- deldir(fb$OSEAST1M10nov, fb$OSNRTH1M10nov)
