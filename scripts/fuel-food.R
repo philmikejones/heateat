@@ -27,6 +27,9 @@ fbm <- read.csv("data/foodbanks-matched.csv")
 fb  <- merge(fbt, fbm, by = "match")
 rm(fbt, fbm)
 
+fbl <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match))
+ggplot() + fbl + llad + coord_equal()
+
 
 # Voronoi polygon layer ====
 vp  <- deldir(fb$OSEAST1M10nov, fb$OSNRTH1M10nov)
