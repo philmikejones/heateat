@@ -125,3 +125,5 @@ ggplot() + llad + fbl + scale_colour_manual(values = c("black", "light grey")) +
   vpm + coord_equal()
 # + plsoa
 # + qmsoa
+
+ggsave("fb-fp.pdf", width = 21/2.54, height = 29.7/2.54)
