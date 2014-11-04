@@ -39,7 +39,6 @@ fb$ru[fb$URINDEW10nov == 7] <- "urban"
 
 fb$ru[fb$URINDEW10nov == 4] <- "rural"
 fb$ru[fb$URINDEW10nov == 8] <- "rural"
-which(fb$ru == "rural")
 
 fbl <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
                                  size = Total, colour = ru))
@@ -48,7 +47,8 @@ fbl <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
 
 # Voronoi polygon layer ====
 vp  <- deldir(fb$OSEAST1M10nov, fb$OSNRTH1M10nov)
-vpm <- geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2))
+vpm <- geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2),
+                    colour = "dark grey")
 
 
 
@@ -114,15 +114,17 @@ fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
 lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
 lsoaf         <- fortify(lsoa, region = "code")
 lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
+lsoaf <- lsoaf[lsoaf$priority == T, ]
 
 plsoa <- geom_polygon(data = lsoaf, aes(long, lat, group = group, 
-fill = priority))
+                                        fill = priority))
 
 
 
 # Final map ====
 ggplot() + llad + fbl + scale_colour_manual(values = c("black", "light grey")) +
-  vpm + coord_equal() + plsoa
+  coord_equal() + plsoa
+# + vpm
 # + qmsoa
 
-ggsave("fb-fp-lsoa.pdf", width = 21/2.54, height = 29.7/2.54)
+ggsave("maps/fb-fp-lsoa.pdf", width = 21/2.54, height = 29.7/2.54)
