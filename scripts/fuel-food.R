@@ -8,6 +8,19 @@ require("ggplot2")
 
 
 
+# Themes ====
+map <- theme(line = element_blank(), 
+             text = element_blank(), 
+             title = element_blank(),
+             panel.background = element_rect(fill = "transparent"),
+             legend.position = "none")
+mapl <- theme(line = element_blank(),
+              axis.text = element_blank(),
+              axis.title = element_blank(),
+              panel.background = element_rect(fill = "transparent"))
+
+
+
 # Map background ====
 # LAD layer for context
 elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
@@ -122,8 +135,9 @@ plsoa <- geom_polygon(data = lsoaf, aes(long, lat, group = group,
 
 
 # Final map ====
-ggplot() + llad + fbl + scale_colour_manual(values = c("black", "light grey")) +
-  coord_equal() + plsoa
+ggplot() + llad + fbl + plsoa + 
+  scale_colour_manual(values = c("black", "light grey")) +
+  coord_equal() + mapl
 # + vpm
 # + qmsoa
 
