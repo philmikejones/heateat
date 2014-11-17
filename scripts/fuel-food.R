@@ -167,6 +167,7 @@ fb$ru[fb$URINDEW10nov == 8] <- "rural"
 # create projection for clipping
 coordinates(fb) <- c("OSEAST1M10nov", "OSNRTH1M10nov")
 proj4string(fb) <- CRS("+init=epsg:27700")
+fb <- spTransform(fb, CRSobj = CRS(proj4string(ee)))
 
 
 
@@ -252,16 +253,19 @@ regions <- regions[order(regions)]
 layers  <- paste0(regions, "f")
 
 for(i in 1:NROW(regions)){
-#   clip <- fb[i, ]
-#   clip@data <- merge(clip@data, clip, by = "match")
-#   fbl  <- geom_point(data = clip@data, 
-#                      aes(OSEAST1M10nov, OSNRTH1M10nov,
-#                          group = match, size = Total.x, colour = ru.x))
+  clip <- fb[i, ]
+  clip@data <- merge(clip@data, clip, by = "match")
+
+  rl  <- geom_polygon(data = as.name(layers[i]), 
+                      aes(long, lat, group = group),
+                      fill = "transparent", colour = "dark grey")
+  fbl <- geom_point(data = clip@data,
+                    aes(OSEAST1M10nov, OSNRTH1M10nov,
+                        group = match, size = Total.x, colour = ru.x))
   
   ggplot() + 
-#    fbl + 
-    geom_polygon(data = as.name(layers[i]), aes(long, lat, group = group), 
-                 fill = "transparent", colour = "dark grey") +
+    rl +
+    fbl + 
     scale_colour_manual(values = c("black", "light grey")) +
     coord_equal() + map
   
