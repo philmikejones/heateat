@@ -257,7 +257,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov,
-                 group = match, size = Total.x, colour = ru.x)) +
+                 group = match, size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
@@ -274,7 +274,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x, colour = ru.x)) +
+                                   size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
@@ -291,7 +291,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x, colour = ru.x)) +
+                                   size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
@@ -308,7 +308,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x, colour = ru.x)) +
+                                   size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
@@ -325,7 +325,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x, colour = ru.x)) +
+                                   size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
@@ -342,7 +342,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x, colour = ru.x)) +
+                                   size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
@@ -359,7 +359,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x, colour = ru.x)) +
+                                   size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
@@ -376,7 +376,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x, colour = ru.x)) +
+                                   size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
@@ -393,7 +393,7 @@ ggplot() +
                aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x, colour = ru.x)) +
+                                   size = Total.x,)) +
   scale_colour_manual(values = c("black", "dark grey")) +
   coord_equal() + 
   map
