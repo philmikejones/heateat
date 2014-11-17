@@ -1,6 +1,6 @@
 # Libraries ====
-require("rgeos")
 require("maptools")
+require("rgeos")
 require("rgdal")
 require("scales")
 require("deldir")  # for voronoi polygons
@@ -21,28 +21,28 @@ mapl <- theme(line = element_blank(),
 
 
 
-# Map background ====
-# LAD layer for context
-elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
-                "england_lad_2011Polygon")
-proj4string(elad) <- CRS("+init=epsg:27700")
-eladf <- fortify(elad, region = "code")
-eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
-rm(elad)
-llad <- geom_polygon(data = eladf, aes(long, lat, group = group), 
-                     fill = "transparent", colour = "light grey")
+# Map background for context ====
+# # LAD layer for context
+# elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
+#                 "england_lad_2011Polygon")
+# proj4string(elad) <- CRS("+init=epsg:27700")
+# eladf <- fortify(elad, region = "code")
+# eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
+# rm(elad)
+# llad <- geom_polygon(data = eladf, aes(long, lat, group = group), 
+#                      fill = "transparent", colour = "light grey")
 
 
 
-# Region layer for context ====
-reg <- readOGR(dsn = "../../Boundary Data/Regions/EngWales Regions 2011",
-               "England_gor_2011")
-proj4string(reg) <- CRS("+init=epsg:27700")
-regf <- fortify(reg, region = "CODE")
-regf <- merge(regf, reg@data, by.x = "id", by.y = "CODE")
-rm(reg)
-lreg <- geom_polygon(data = regf, aes(long, lat, group = group), 
-                     fill = "transparent", colour = "light grey")
+# # Region layer for context ====
+# reg <- readOGR(dsn = "../../Boundary Data/Regions/EngWales Regions 2011",
+#                "England_gor_2011")
+# proj4string(reg) <- CRS("+init=epsg:27700")
+# regf <- fortify(reg, region = "CODE")
+# regf <- merge(regf, reg@data, by.x = "id", by.y = "CODE")
+# rm(reg)
+# lreg <- geom_polygon(data = regf, aes(long, lat, group = group), 
+#                      fill = "transparent", colour = "light grey")
 
 
 
@@ -52,10 +52,8 @@ em <- readOGR(dsn = "../../Boundary Data/Regions/east-midlands",
 proj4string(em) <- CRS("+init=epsg:27700")
 emf <- fortify(em, region = "code")
 emf <- merge(emf, em@data, by.x = "id", by.y = "code")
-rm(em)
 lem <- geom_polygon(data = emf, aes(long, lat, group = group), 
                      fill = "transparent", colour = "dark grey")
-ggplot() + lem + map + coord_equal()
 
 
 
@@ -65,10 +63,8 @@ ee <- readOGR(dsn = "../../Boundary Data/Regions/east-of-england",
 proj4string(ee) <- CRS("+init=epsg:27700")
 eef <- fortify(ee, region = "code")
 eef <- merge(eef, ee@data, by.x = "id", by.y = "code")
-rm(ee)
 lee <- geom_polygon(data = eef, aes(long, lat, group = group), 
                     fill = "transparent", colour = "dark grey")
-ggplot() + lee + map + coord_equal()
 
 
 
@@ -78,10 +74,8 @@ lon <- readOGR(dsn = "../../Boundary Data/Regions/london/",
 proj4string(lon) <- CRS("+init=epsg:27700")
 lonf <- fortify(lon, region = "code")
 lonf <- merge(lonf, lon@data, by.x = "id", by.y = "code")
-rm(lon)
 llon <- geom_polygon(data = lonf, aes(long, lat, group = group), 
                     fill = "transparent", colour = "dark grey")
-ggplot() + llon + map + coord_equal()
 
 
 
@@ -91,10 +85,8 @@ ne <- readOGR(dsn = "../../Boundary Data/Regions/north-east/",
 proj4string(ne) <- CRS("+init=epsg:27700")
 nef <- fortify(ne, region = "code")
 nef <- merge(nef, ne@data, by.x = "id", by.y = "code")
-rm(ne)
 lne <- geom_polygon(data = nef, aes(long, lat, group = group), 
                      fill = "transparent", colour = "dark grey")
-ggplot() + lne + map + coord_equal()
 
 
 
@@ -104,10 +96,8 @@ nw <- readOGR(dsn = "../../Boundary Data/Regions/north-west/",
 proj4string(nw) <- CRS("+init=epsg:27700")
 nwf <- fortify(nw, region = "code")
 nwf <- merge(nwf, nw@data, by.x = "id", by.y = "code")
-rm(nw)
 lnw <- geom_polygon(data = nwf, aes(long, lat, group = group), 
                     fill = "transparent", colour = "dark grey")
-ggplot() + lnw + map + coord_equal()
 
 
 
@@ -117,10 +107,8 @@ se <- readOGR(dsn = "../../Boundary Data/Regions/south-east/",
 proj4string(se) <- CRS("+init=epsg:27700")
 sef <- fortify(se, region = "code")
 sef <- merge(sef, se@data, by.x = "id", by.y = "code")
-rm(se)
 lse <- geom_polygon(data = sef, aes(long, lat, group = group), 
                     fill = "transparent", colour = "dark grey")
-ggplot() + lse + map + coord_equal()
 
 
 
@@ -130,10 +118,8 @@ sw <- readOGR(dsn = "../../Boundary Data/Regions/south-west/",
 proj4string(sw) <- CRS("+init=epsg:27700")
 swf <- fortify(sw, region = "code")
 swf <- merge(swf, sw@data, by.x = "id", by.y = "code")
-rm(sw)
 lsw <- geom_polygon(data = swf, aes(long, lat, group = group), 
                     fill = "transparent", colour = "dark grey")
-ggplot() + lsw + map + coord_equal()
 
 
 
@@ -143,10 +129,8 @@ wm <- readOGR(dsn = "../../Boundary Data/Regions/west-midlands/",
 proj4string(wm) <- CRS("+init=epsg:27700")
 wmf <- fortify(wm, region = "code")
 wmf <- merge(wmf, wm@data, by.x = "id", by.y = "code")
-rm(wm)
 lwm <- geom_polygon(data = wmf, aes(long, lat, group = group), 
                     fill = "transparent", colour = "dark grey")
-ggplot() + lwm + map + coord_equal()
 
 
 
@@ -156,10 +140,8 @@ yh <- readOGR(dsn = "../../Boundary Data/Regions/yorks-humber/",
 proj4string(yh) <- CRS("+init=epsg:27700")
 yhf <- fortify(yh, region = "code")
 yhf <- merge(yhf, yh@data, by.x = "id", by.y = "code")
-rm(yh)
 lyh <- geom_polygon(data = yhf, aes(long, lat, group = group), 
                     fill = "transparent", colour = "dark grey")
-ggplot() + lyh + map + coord_equal()
 
 
 
@@ -182,8 +164,9 @@ fb$ru[fb$URINDEW10nov == 7] <- "urban"
 fb$ru[fb$URINDEW10nov == 4] <- "rural"
 fb$ru[fb$URINDEW10nov == 8] <- "rural"
 
-fbl <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                 size = Total, colour = ru))
+# create projection for clipping
+coordinates(fb) <- c("OSEAST1M10nov", "OSNRTH1M10nov")
+proj4string(fb) <- CRS("+init=epsg:27700")
 
 
 
@@ -244,30 +227,50 @@ fbl <- geom_point(data = fb, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
 
 
 
-# Priority LSOAs ====
-# commented out because it takes bloody ages
-lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
-                "england_lsoa_2011Polygon")
-proj4string(lsoa) <- CRS("+init=epsg:27700")
-
-fpp           <- read.csv("data/fp-priority-lsoa.csv")
-lsoa$code     <- as.character(lsoa$code)
-fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
-lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
-lsoaf         <- fortify(lsoa, region = "code")
-lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
-lsoaf <- lsoaf[lsoaf$priority == T, ]
-
-plsoa <- geom_polygon(data = lsoaf, aes(long, lat, group = group, 
-                                        fill = priority))
+# # Priority LSOAs ====
+# # commented out because it takes bloody ages
+# lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
+#                 "england_lsoa_2011Polygon")
+# proj4string(lsoa) <- CRS("+init=epsg:27700")
+# 
+# fpp           <- read.csv("data/fp-priority-lsoa.csv")
+# lsoa$code     <- as.character(lsoa$code)
+# fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
+# lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
+# lsoaf         <- fortify(lsoa, region = "code")
+# lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
+# lsoaf <- lsoaf[lsoaf$priority == T, ]
+# 
+# plsoa <- geom_polygon(data = lsoaf, aes(long, lat, group = group, 
+#                                         fill = priority))
 
 
 
 # Final map ====
-ggplot() + llad + fbl + plsoa + 
-  scale_colour_manual(values = c("black", "light grey")) +
-  coord_equal() + mapl
+regions <- c("em", "ee", "lon", "ne", "nw", "se", "sw", "wm", "yh")
+regions <- regions[order(regions)]
+layers  <- paste0(regions, "f")
+
+for(i in 1:NROW(regions)){
+#   clip <- fb[i, ]
+#   clip@data <- merge(clip@data, clip, by = "match")
+#   fbl  <- geom_point(data = clip@data, 
+#                      aes(OSEAST1M10nov, OSNRTH1M10nov,
+#                          group = match, size = Total.x, colour = ru.x))
+  
+  ggplot() + 
+#    fbl + 
+    geom_polygon(data = as.name(layers[i]), aes(long, lat, group = group), 
+                 fill = "transparent", colour = "dark grey") +
+    scale_colour_manual(values = c("black", "light grey")) +
+    coord_equal() + map
+  
+  ggsave(filename = (paste0(i, "-region-fb.pdf")), path = "maps",
+         width = 21/2.54, height = 29.7/2.54)
+}
+
+# + plsoa
 # + vpm
 # + qmsoa
 
-ggsave("maps/fb-fp-lsoa.pdf", width = 21/2.54, height = 29.7/2.54)
+# ggsave("maps/fb-fp-lsoa.pdf", width = 21/2.54, height = 29.7/2.54)
