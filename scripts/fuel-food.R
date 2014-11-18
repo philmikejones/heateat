@@ -21,6 +21,12 @@ mapl <- theme(line = element_blank(),
 
 
 
+# Paper sizes ====
+a3p <- c(29.7, 42)
+a3l <- c(42, 29.7)
+
+
+
 # Map background layers ====
 # # LAD layer
 # elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
@@ -151,17 +157,17 @@ fb  <- merge(fbt, fbm, by = "match")
 rm(fbt, fbm)
 fb <- fb[fb$URINDEW10nov != 9, ]  # 9 is Scotland/NI/Channel Is/IoM, see docs
 
-# Simplify urban/rural classification
-fb$ru <- NA
-fb$ru[fb$URINDEW10nov == 1] <- "urban"
-fb$ru[fb$URINDEW10nov == 2] <- "urban"
-fb$ru[fb$URINDEW10nov == 3] <- "urban"
-fb$ru[fb$URINDEW10nov == 5] <- "urban"
-fb$ru[fb$URINDEW10nov == 6] <- "urban"
-fb$ru[fb$URINDEW10nov == 7] <- "urban"
-
-fb$ru[fb$URINDEW10nov == 4] <- "rural"
-fb$ru[fb$URINDEW10nov == 8] <- "rural"
+# # Simplify urban/rural classification
+# fb$ru <- NA
+# fb$ru[fb$URINDEW10nov == 1] <- "urban"
+# fb$ru[fb$URINDEW10nov == 2] <- "urban"
+# fb$ru[fb$URINDEW10nov == 3] <- "urban"
+# fb$ru[fb$URINDEW10nov == 5] <- "urban"
+# fb$ru[fb$URINDEW10nov == 6] <- "urban"
+# fb$ru[fb$URINDEW10nov == 7] <- "urban"
+# 
+# fb$ru[fb$URINDEW10nov == 4] <- "rural"
+# fb$ru[fb$URINDEW10nov == 8] <- "rural"
 
 # create projection for clipping
 coordinates(fb) <- c("OSEAST1M10nov", "OSNRTH1M10nov")
@@ -178,7 +184,7 @@ fb <- spTransform(fb, CRSobj = CRS(proj4string(yh)))
 
 
 # Fuel poverty layer ====
-# MSOA quintile ====
+# MSOA quintile
 # lihc <- read.csv("data/fplihc.csv", skip = 2, header = T)
 # lihc$Estimated.number.of.households <- 
 #   as.numeric(lihc$Estimated.number.of.households)
@@ -227,7 +233,7 @@ fb <- spTransform(fb, CRSobj = CRS(proj4string(yh)))
 
 
 
-# Priority LSOAs ====
+# Priority LSOAs
 lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
                 "england_lsoa_2011Polygon")
 proj4string(lsoa) <- CRS("+init=epsg:27700")
@@ -238,24 +244,6 @@ fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
 lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
 lsoa          <- lsoa[lsoa$priority == T, ]
 lsoa  <- spTransform(lsoa, CRSobj = CRS(proj4string(yh)))
-
-# Yorkshire and the Humber
-clsoa  <- lsoa
-clsoa  <- clsoa[yh, ]
-clsoaf <- fortify(clsoa, region = "code")
-clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
-
-ggplot() +
-  geom_polygon(data = clsoaf, aes(long, lat, group = group,
-                                  fill = priority)) +
-  geom_polygon(data = yhf, aes(long, lat, group = group),
-               fill = "transparent", colour = "dark grey") +
-  geom_point(data = clip@data, 
-             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
-                 size = Total.x)) +
-  coord_equal() + map
-ggsave(filename = "lsoap-test.pdf", path = "maps/", 
-       width = 29.7/2.54, height = 42/2.54)
 
 
 
@@ -397,18 +385,22 @@ ggsave(filename = "lsoap-test.pdf", path = "maps/",
 #        width = 21/2.54, height = 29.7/2.54)
 # 
 # Yorkshire and the Humber
-clip <- fb[yh, ]
-clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = yhf, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "yorkshire-humber-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
+cfb <- fb[yh, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[yh, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = yhf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = priority)) +
+  coord_equal() + mapl
+  
+ggsave(filename = "yorks-humber.pdf", path = "maps/", 
+       width = a3l[1], height = a3l[2])
