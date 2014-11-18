@@ -244,10 +244,6 @@ fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
 lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
 lsoa          <- lsoa[lsoa$priority == T, ]
 
-<<<<<<< HEAD
-# plsoa <- geom_polygon(data = lsoaf, aes(long, lat, group = group, 
-#                                        fill = priority))
-=======
 lru <- read.csv("data/RUC11_LSOA11_EW.csv", header = T)
 # Specify rural/urban dichotomy
 # E1 and E2 == rural
@@ -258,7 +254,6 @@ lru$ru[lru$RUC11CD == "C1"] <- "urban"
 lru$ru[lru$RUC11CD == "C2"] <- "urban"
 lru$ru[lru$RUC11CD == "D1"] <- "urban"
 lru$ru[lru$RUC11CD == "D2"] <- "urban"
->>>>>>> 47ccb288fc3b3ca164b6b7dfdde612f0a472c798
 
 lru$ru[lru$RUC11CD == "E1"] <- "rural"
 lru$ru[lru$RUC11CD == "E2"] <- "rural"
@@ -269,167 +264,6 @@ View(lsoa@data)
 
 
 # # Final maps ====
-<<<<<<< HEAD
-# # East of England
-# clip <- fb[ee, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = eef, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov,
-#                  group = match, size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "east-of-england-fb.pdf", path = "maps",
-#          width = 21/2.54, height = 29.7/2.54)
-# 
-# # East Midlands
-# clip <- fb[em, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = emf, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "east-midlands-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
-# 
-# # London
-# clip <- fb[lon, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = lonf, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "london-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
-# 
-# # North East
-# clip <- fb[ne, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = nef, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "north-east-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
-# 
-# # North West
-# clip <- fb[nw, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = nwf, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "north-west-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
-# 
-# # South East
-# clip <- fb[se, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = sef, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "south-east-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
-# 
-# # South West
-# clip <- fb[sw, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = swf, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "south-west-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
-# 
-# # West Midlands
-# clip <- fb[wm, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = wmf, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
-# ggsave(filename = "west-midlands-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
-# 
-# Yorkshire and the Humber
-clip <- fb[yh, ]
-clip@data <- merge(clip@data, clip, by = "match")
-c
-
-ggplot() +
-  geom_polygon(data = yhf, 
-               aes(long, lat, group = group),
-               fill = "transparent", colour = "dark grey") +
-  geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-                                   size = Total.x)) +
-  scale_colour_manual(values = c("black", "dark grey")) +
-  coord_equal() + 
-  map
-
-ggplot() +
-  geom_polygon(data = lsoaf, aes(long, lat, group = group,
-                                 fill = priority)) +
-  coord_equal() + map
-ggsave(filename = "lsoap-test.pdf", path = "maps/", 
-       width = 29.7/2.54, height = 42/2.54)
-# ggsave(filename = "yorkshire-humber-fb.pdf", path = "maps",
-#        width = 21/2.54, height = 29.7/2.54)
-=======
 # East of England
 cfb <- fb[ee, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
@@ -636,4 +470,3 @@ ggplot() +
   
 ggsave(filename = "yorks-humber.pdf", path = "maps/", 
        width = land[1], height = land[2])
->>>>>>> 47ccb288fc3b3ca164b6b7dfdde612f0a472c798
