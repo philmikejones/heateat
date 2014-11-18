@@ -242,14 +242,8 @@ lsoaf         <- fortify(lsoa, region = "code")
 lsoaf         <- merge(lsoaf, lsoa@data, by.x = "id", by.y = "code")
 lsoaf         <- lsoaf[lsoaf$priority == T, ]
 
-ggplot() +
-  geom_polygon(data = lsoaf, aes(long, lat, group = group,
-                                 fill = priority)) +
-  coord_equal() + map
-ggsave(filename = "lsoap-test.pdf", path = "maps/", 
-       width = 29.7/2.54, height = 42/2.54)
 # plsoa <- geom_polygon(data = lsoaf, aes(long, lat, group = group, 
-                                        fill = priority))
+#                                        fill = priority))
 
 
 
@@ -390,19 +384,26 @@ ggsave(filename = "lsoap-test.pdf", path = "maps/",
 # ggsave(filename = "west-midlands-fb.pdf", path = "maps",
 #        width = 21/2.54, height = 29.7/2.54)
 # 
-# # Yorkshire and the Humber
-# clip <- fb[yh, ]
-# clip@data <- merge(clip@data, clip, by = "match")
-# 
-# ggplot() +
-#   geom_polygon(data = yhf, 
-#                aes(long, lat, group = group),
-#                fill = "transparent", colour = "dark grey") +
-#   geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
-#                                    size = Total.x)) +
-#   scale_colour_manual(values = c("black", "dark grey")) +
-#   coord_equal() + 
-#   map
-# 
+# Yorkshire and the Humber
+clip <- fb[yh, ]
+clip@data <- merge(clip@data, clip, by = "match")
+c
+
+ggplot() +
+  geom_polygon(data = yhf, 
+               aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = clip@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match, 
+                                   size = Total.x)) +
+  scale_colour_manual(values = c("black", "dark grey")) +
+  coord_equal() + 
+  map
+
+ggplot() +
+  geom_polygon(data = lsoaf, aes(long, lat, group = group,
+                                 fill = priority)) +
+  coord_equal() + map
+ggsave(filename = "lsoap-test.pdf", path = "maps/", 
+       width = 29.7/2.54, height = 42/2.54)
 # ggsave(filename = "yorkshire-humber-fb.pdf", path = "maps",
 #        width = 21/2.54, height = 29.7/2.54)
