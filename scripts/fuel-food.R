@@ -22,8 +22,8 @@ mapl <- theme(line = element_blank(),
 
 
 # Paper sizes ====
-port <- c(29.7, 42)
-land <- c(42, 29.7)
+port <- c(29.7/2.54, 42/2.54)
+land <- c(42/2.54, 29.7/2.54)
 
 
 
@@ -264,6 +264,29 @@ View(lsoa@data)
 
 
 # # Final maps ====
+# East of England
+cfb <- fb[ee, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[ee, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = eef, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
+  coord_equal() + mapl
+
+ggsave(filename = "east-england.pdf", path = "maps/", 
+       width = land[1], height = land[2])
+
 # Yorkshire and the Humber
 cfb <- fb[yh, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
@@ -280,6 +303,8 @@ ggplot() +
                  colour = Total.x)) +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
   coord_equal() + mapl
   
 ggsave(filename = "yorks-humber.pdf", path = "maps/", 
