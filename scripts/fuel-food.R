@@ -22,8 +22,8 @@ mapl <- theme(line = element_blank(),
 
 
 # Paper sizes ====
-a3p <- c(29.7, 42)
-a3l <- c(42, 29.7)
+port <- c(29.7, 42)
+land <- c(42, 29.7)
 
 
 
@@ -403,4 +403,4 @@ ggplot() +
   coord_equal() + mapl
   
 ggsave(filename = "yorks-humber.pdf", path = "maps/", 
-       width = a3l[1], height = a3l[2])
+       width = land[1], height = land[2])
