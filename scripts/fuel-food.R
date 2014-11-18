@@ -287,6 +287,167 @@ ggplot() +
 ggsave(filename = "east-england.pdf", path = "maps/", 
        width = land[1], height = land[2])
 
+# East Midlands
+cfb <- fb[em, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[em, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = emf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
+  coord_equal() + mapl
+
+ggsave(filename = "east-midlands.pdf", path = "maps/", 
+       width = land[1], height = land[2])
+
+# London
+cfb <- fb[lon, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[lon, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = lonf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
+  coord_equal() + mapl
+
+ggsave(filename = "london.pdf", path = "maps/", 
+       width = land[1], height = land[2])
+
+# North East
+cfb <- fb[ne, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[ne, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = nef, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
+  coord_equal() + mapl
+
+ggsave(filename = "north-east.pdf", path = "maps/", 
+       width = port[1], height = port[2])
+
+# North West
+cfb <- fb[nw, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[nw, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = nwf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
+  coord_equal() + mapl
+
+ggsave(filename = "north-west.pdf", path = "maps/", 
+       width = port[1], height = port[2])
+
+# South East
+cfb <- fb[se, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[se, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = sef, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
+  coord_equal() + mapl
+
+ggsave(filename = "south-east.pdf", path = "maps/", 
+       width = land[1], height = land[2])
+
+# South West
+cfb <- fb[sw, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[sw, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = swf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
+  coord_equal() + mapl
+
+ggsave(filename = "south-west.pdf", path = "maps/", 
+       width = land[1], height = land[2])
+
+# West Midlands
+cfb <- fb[wm, ]
+cfb@data <- merge(cfb@data, cfb, by = "match")
+clsoa  <- lsoa
+clsoa  <- clsoa[wm, ]
+clsoaf <- fortify(clsoa, region = "code")
+clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = wmf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
+  geom_point(data = cfb@data, 
+             aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                 colour = Total.x)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
+  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_fill_brewer(type = "qual", palette = "Dark2", name = "Rural/Urban") +
+  coord_equal() + mapl
+
+ggsave(filename = "west-midlands.pdf", path = "maps/", 
+       width = land[1], height = land[2])
+
 # Yorkshire and the Humber
 cfb <- fb[yh, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
