@@ -248,12 +248,12 @@ lru <- read.csv("data/RUC11_LSOA11_EW.csv", header = T)
 # Specify rural/urban dichotomy
 # E1 and E2 == rural
 lru$ru <- NA
-lru$ru[lru$RUC11CD == "A1"] <- "Not Rural"
-lru$ru[lru$RUC11CD == "B1"] <- "Not Rural"
-lru$ru[lru$RUC11CD == "C1"] <- "Not Rural"
-lru$ru[lru$RUC11CD == "C2"] <- "Not Rural"
-lru$ru[lru$RUC11CD == "D1"] <- "Not Rural"
-lru$ru[lru$RUC11CD == "D2"] <- "Not Rural"
+lru$ru[lru$RUC11CD == "A1"] <- "Urban"
+lru$ru[lru$RUC11CD == "B1"] <- "Urban"
+lru$ru[lru$RUC11CD == "C1"] <- "Urban"
+lru$ru[lru$RUC11CD == "C2"] <- "Urban"
+lru$ru[lru$RUC11CD == "D1"] <- "Urban"
+lru$ru[lru$RUC11CD == "D2"] <- "Urban"
 
 lru$ru[lru$RUC11CD == "E1"] <- "Rural"
 lru$ru[lru$RUC11CD == "E2"] <- "Rural"
@@ -281,7 +281,7 @@ ggplot() +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2", 
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
 
@@ -305,7 +305,7 @@ ggplot() +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2", 
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
 
@@ -329,7 +329,7 @@ ggplot() +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2", 
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
 
@@ -353,7 +353,7 @@ ggplot() +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2", 
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
 
@@ -377,7 +377,7 @@ ggplot() +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2", 
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
 
@@ -401,7 +401,7 @@ ggplot() +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2", 
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
 
@@ -425,7 +425,7 @@ ggplot() +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2",
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
 
@@ -449,7 +449,7 @@ ggplot() +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2", 
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
 
@@ -471,9 +471,9 @@ ggplot() +
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
-                                  fill = ru)) +
+                                  fill = rev(ru))) +
   scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
-  scale_fill_brewer(type = "qual", palette = "Dark2", 
+  scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
   
