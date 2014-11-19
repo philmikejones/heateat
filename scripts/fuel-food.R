@@ -260,7 +260,7 @@ lru$ru[lru$RUC11CD == "E2"] <- "rural"
 
 lsoa@data <- merge(lsoa@data, lru, by.x = "code", by.y = "LSOA11CD")
 lsoa  <- spTransform(lsoa, CRSobj = CRS(proj4string(yh)))
-View(lsoa@data)
+
 
 
 # # Final maps ====
