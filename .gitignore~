@@ -1,7 +1,6 @@
 /data
-/maps
 .Rproj.user
 .RData
-.DS_Store
 .R*
+/maps
 *.pdf
