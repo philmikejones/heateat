@@ -131,17 +131,16 @@ lsoa          <- lsoa[lsoa$priority == T, ]
 
 lru <- read.csv("data/RUC11_LSOA11_EW.csv", header = T)
 # Specify rural/urban dichotomy
-# E1 and E2 == rural
 lru$ru <- NA
-lru$ru[lru$RUC11CD == "A1"] <- "Urban"
-lru$ru[lru$RUC11CD == "B1"] <- "Urban"
-lru$ru[lru$RUC11CD == "C1"] <- "Urban"
-lru$ru[lru$RUC11CD == "C2"] <- "Urban"
-lru$ru[lru$RUC11CD == "D1"] <- "Urban"
-lru$ru[lru$RUC11CD == "D2"] <- "Urban"
+lru$ru[lru$RUC11CD == "A1"] <- "Urban"  # Urban major conurbation
+lru$ru[lru$RUC11CD == "B1"] <- "Urban"  # Urban minor conurbation
+lru$ru[lru$RUC11CD == "C1"] <- "Urban"  # Urban city and town
+lru$ru[lru$RUC11CD == "C2"] <- "Urban"  # Urban city and town sparse
 
-lru$ru[lru$RUC11CD == "E1"] <- "Rural"
-lru$ru[lru$RUC11CD == "E2"] <- "Rural"
+lru$ru[lru$RUC11CD == "D1"] <- "Rural"  # Rural town and fringe
+lru$ru[lru$RUC11CD == "D2"] <- "Rural"  # Rural town and fringe sparse
+lru$ru[lru$RUC11CD == "E1"] <- "Rural"  # Rural village and dispersed
+lru$ru[lru$RUC11CD == "E2"] <- "Rural"  # Rural village and dis. sparse
 
 lsoa@data <- merge(lsoa@data, lru, by.x = "code", by.y = "LSOA11CD")
 lsoa  <- spTransform(lsoa, CRSobj = CRS(proj4string(reg)))
