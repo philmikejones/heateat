@@ -56,6 +56,7 @@ fbm <- read.csv("data/foodbanks-matched.csv")
 fb  <- merge(fbt, fbm, by = "match")
 rm(fbt, fbm)
 fb <- fb[fb$URINDEW10nov != 9, ]  # 9 is Scotland/NI/Channel Is/IoM, see docs
+fb$Total[fb$Total == -99] <- NA
 
 # create projection for clipping
 coordinates(fb) <- c("OSEAST1M10nov", "OSNRTH1M10nov")
@@ -150,8 +151,8 @@ lsoa  <- spTransform(lsoa, CRSobj = CRS(proj4string(reg)))
 # # Final maps ====
 # East of England
 creg  <- reg[reg$CODE == "E12000006", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -163,16 +164,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
@@ -183,8 +185,8 @@ ggsave(filename = "east-england.pdf", path = "maps/",
 
 # East Midlands
 creg  <- reg[reg$CODE == "E12000004", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -196,16 +198,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
@@ -216,8 +219,8 @@ ggsave(filename = "east-midlands.pdf", path = "maps/",
 
 # London
 creg  <- reg[reg$CODE == "E12000007", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -229,16 +232,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
@@ -249,8 +253,8 @@ ggsave(filename = "london.pdf", path = "maps/",
 
 # North East
 creg  <- reg[reg$CODE == "E12000001", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -262,16 +266,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
@@ -282,8 +287,8 @@ ggsave(filename = "north-east.pdf", path = "maps/",
 
 # North West
 creg  <- reg[reg$CODE == "E12000002", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -295,16 +300,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
@@ -315,8 +321,8 @@ ggsave(filename = "north-west.pdf", path = "maps/",
 
 # South East
 creg  <- reg[reg$CODE == "E12000008", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -328,16 +334,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
@@ -348,8 +355,8 @@ ggsave(filename = "south-east.pdf", path = "maps/",
 
 # South West
 creg  <- reg[reg$CODE == "E12000009", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -361,16 +368,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
@@ -381,8 +389,8 @@ ggsave(filename = "south-west.pdf", path = "maps/",
 
 # West Midlands
 creg  <- reg[reg$CODE == "E12000005", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -394,16 +402,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
@@ -414,8 +423,8 @@ ggsave(filename = "west-midlands.pdf", path = "maps/",
 
 # Yorkshire and the Humber
 creg  <- reg[reg$CODE == "E12000003", ]
-clad  <- elad[creg, ]
 clsoa <- lsoa[creg, ]
+clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
 
@@ -427,16 +436,17 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = cregf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = clsoaf, aes(long, lat, group = group,
                                   fill = ru)) +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
   scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        na.value = "grey", 
                         name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
