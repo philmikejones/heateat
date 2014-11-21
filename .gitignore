@@ -1,6 +1,7 @@
 /data
 /maps
 /shapes
+.gitignore~
 .Rproj.user
 .RData
 .DS_Store
