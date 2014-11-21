@@ -28,125 +28,25 @@ land <- c(42/2.54, 29.7/2.54)
 
 
 # Map background layers ====
-# # LAD layer
-# elad <- readOGR(dsn = "../../Boundary Data/LADs/englandLADs", 
-#                 "england_lad_2011Polygon")
-# proj4string(elad) <- CRS("+init=epsg:27700")
-# eladf <- fortify(elad, region = "code")
-# eladf <- merge(eladf, elad@data, by.x = "id", by.y = "code")
-# rm(elad)
-# llad <- geom_polygon(data = eladf, aes(long, lat, group = group), 
-#                      fill = "transparent", colour = "light grey")
+# Regions
+reg <- readOGR(dsn = "shapes/ewregions/",
+               "England_gor_2011")
+proj4string(reg) <- CRS("+init=epsg:27700")
+#   CODE                          NAME
+# 0 E12000006          East of England
+# 1 E12000007                   London
+# 2 E12000002               North West
+# 3 E12000001               North East
+# 4 E12000004            East Midlands
+# 5 E12000003 Yorkshire and The Humber
+# 6 E12000009               South West
+# 7 E12000005            West Midlands
+# 8 E12000008               South East
 
-# # Region layer
-# reg <- readOGR(dsn = "../../Boundary Data/Regions/EngWales Regions 2011",
-#                "England_gor_2011")
-# proj4string(reg) <- CRS("+init=epsg:27700")
-# regf <- fortify(reg, region = "CODE")
-# regf <- merge(regf, reg@data, by.x = "id", by.y = "CODE")
-# rm(reg)
-# lreg <- geom_polygon(data = regf, aes(long, lat, group = group), 
-#                      fill = "transparent", colour = "light grey")
-
-
-
-# Individual Regions ====
-# East Midlands
-em <- readOGR(dsn = "../../Boundary Data/Regions/east-midlands",
-               "england_gor_2011Polygon")
-proj4string(em) <- CRS("+init=epsg:27700")
-emf <- fortify(em, region = "code")
-emf <- merge(emf, em@data, by.x = "id", by.y = "code")
-lem <- geom_polygon(data = emf, aes(long, lat, group = group), 
-                     fill = "transparent", colour = "dark grey")
-
-
-
-# East of England
-ee <- readOGR(dsn = "../../Boundary Data/Regions/east-of-england",
-              "england_gor_2011Polygon")
-proj4string(ee) <- CRS("+init=epsg:27700")
-eef <- fortify(ee, region = "code")
-eef <- merge(eef, ee@data, by.x = "id", by.y = "code")
-lee <- geom_polygon(data = eef, aes(long, lat, group = group), 
-                    fill = "transparent", colour = "dark grey")
-
-
-
-# London
-lon <- readOGR(dsn = "../../Boundary Data/Regions/london/",
-              "england_gor_2011Polygon")
-proj4string(lon) <- CRS("+init=epsg:27700")
-lonf <- fortify(lon, region = "code")
-lonf <- merge(lonf, lon@data, by.x = "id", by.y = "code")
-llon <- geom_polygon(data = lonf, aes(long, lat, group = group), 
-                    fill = "transparent", colour = "dark grey")
-
-
-
-# North East
-ne <- readOGR(dsn = "../../Boundary Data/Regions/north-east/",
-               "england_gor_2011Polygon")
-proj4string(ne) <- CRS("+init=epsg:27700")
-nef <- fortify(ne, region = "code")
-nef <- merge(nef, ne@data, by.x = "id", by.y = "code")
-lne <- geom_polygon(data = nef, aes(long, lat, group = group), 
-                     fill = "transparent", colour = "dark grey")
-
-
-
-# North West
-nw <- readOGR(dsn = "../../Boundary Data/Regions/north-west/",
-              "england_gor_2011Polygon")
-proj4string(nw) <- CRS("+init=epsg:27700")
-nwf <- fortify(nw, region = "code")
-nwf <- merge(nwf, nw@data, by.x = "id", by.y = "code")
-lnw <- geom_polygon(data = nwf, aes(long, lat, group = group), 
-                    fill = "transparent", colour = "dark grey")
-
-
-
-# South East
-se <- readOGR(dsn = "../../Boundary Data/Regions/south-east/",
-              "england_gor_2011Polygon")
-proj4string(se) <- CRS("+init=epsg:27700")
-sef <- fortify(se, region = "code")
-sef <- merge(sef, se@data, by.x = "id", by.y = "code")
-lse <- geom_polygon(data = sef, aes(long, lat, group = group), 
-                    fill = "transparent", colour = "dark grey")
-
-
-
-# South West
-sw <- readOGR(dsn = "../../Boundary Data/Regions/south-west/",
-              "england_gor_2011Polygon")
-proj4string(sw) <- CRS("+init=epsg:27700")
-swf <- fortify(sw, region = "code")
-swf <- merge(swf, sw@data, by.x = "id", by.y = "code")
-lsw <- geom_polygon(data = swf, aes(long, lat, group = group), 
-                    fill = "transparent", colour = "dark grey")
-
-
-
-# West Midlands
-wm <- readOGR(dsn = "../../Boundary Data/Regions/west-midlands/",
-              "england_gor_2011Polygon")
-proj4string(wm) <- CRS("+init=epsg:27700")
-wmf <- fortify(wm, region = "code")
-wmf <- merge(wmf, wm@data, by.x = "id", by.y = "code")
-lwm <- geom_polygon(data = wmf, aes(long, lat, group = group), 
-                    fill = "transparent", colour = "dark grey")
-
-
-
-# Yorkshire and the Humber
-yh <- readOGR(dsn = "../../Boundary Data/Regions/yorks-humber/",
-              "england_gor_2011Polygon")
-proj4string(yh) <- CRS("+init=epsg:27700")
-yhf <- fortify(yh, region = "code")
-yhf <- merge(yhf, yh@data, by.x = "id", by.y = "code")
-lyh <- geom_polygon(data = yhf, aes(long, lat, group = group), 
-                    fill = "transparent", colour = "dark grey")
+# LADs
+elad <- readOGR(dsn = "shapes/englandLADs/", 
+                "england_lad_2011Polygon")
+proj4string(elad) <- CRS("+init=epsg:27700")
 
 
 
@@ -157,28 +57,15 @@ fb  <- merge(fbt, fbm, by = "match")
 rm(fbt, fbm)
 fb <- fb[fb$URINDEW10nov != 9, ]  # 9 is Scotland/NI/Channel Is/IoM, see docs
 
-# # Simplify urban/rural classification
-# fb$ru <- NA
-# fb$ru[fb$URINDEW10nov == 1] <- "urban"
-# fb$ru[fb$URINDEW10nov == 2] <- "urban"
-# fb$ru[fb$URINDEW10nov == 3] <- "urban"
-# fb$ru[fb$URINDEW10nov == 5] <- "urban"
-# fb$ru[fb$URINDEW10nov == 6] <- "urban"
-# fb$ru[fb$URINDEW10nov == 7] <- "urban"
-# 
-# fb$ru[fb$URINDEW10nov == 4] <- "rural"
-# fb$ru[fb$URINDEW10nov == 8] <- "rural"
-
 # create projection for clipping
 coordinates(fb) <- c("OSEAST1M10nov", "OSNRTH1M10nov")
 proj4string(fb) <- CRS("+init=epsg:27700")
-fb <- spTransform(fb, CRSobj = CRS(proj4string(yh)))
-
-
+fb <- spTransform(fb, CRSobj = CRS(proj4string(reg)))
 
 # # Voronoi polygon layer ====
 # vp  <- deldir(fb$OSEAST1M10nov, fb$OSNRTH1M10nov)
-# vpm <- geom_segment(data = vp$dirsgs, aes(x = x1, y = y1, xend = x2, yend = y2),
+# vpm <- geom_segment(data = vp$dirsgs,
+#                     aes(x = x1, y = y1, xend = x2, yend = y2),
 #                     colour = "dark grey")
 
 
@@ -231,10 +118,8 @@ fb <- spTransform(fb, CRSobj = CRS(proj4string(yh)))
 # qmsoa <- geom_polygon(data = emsoaf, aes(long, lat, group = group), 
 #                                       fill = "red")
 
-
-
 # Priority LSOAs
-lsoa <- readOGR(dsn = "../../Boundary Data/LSOAs/eng-lsoa-2011", 
+lsoa <- readOGR(dsn = "shapes/englsoa/", 
                 "england_lsoa_2011Polygon")
 proj4string(lsoa) <- CRS("+init=epsg:27700")
 
@@ -259,28 +144,37 @@ lru$ru[lru$RUC11CD == "E1"] <- "Rural"
 lru$ru[lru$RUC11CD == "E2"] <- "Rural"
 
 lsoa@data <- merge(lsoa@data, lru, by.x = "code", by.y = "LSOA11CD")
-lsoa  <- spTransform(lsoa, CRSobj = CRS(proj4string(yh)))
+lsoa  <- spTransform(lsoa, CRSobj = CRS(proj4string(reg)))
 
 
 
 # # Final maps ====
 # East of England
-cfb <- fb[ee, ]
+creg  <- reg[reg$CODE == "E12000006", ]
+clad  <- elad[creg, ]
+clsoa <- lsoa[creg, ]
+cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
-clsoa  <- lsoa
-clsoa  <- clsoa[ee, ]
+
+cregf <- fortify(creg, region = "CODE")
+cregf <- merge(cregf, creg, by.x = "id", by.y = "CODE")
+cladf <- fortify(clad, region = "code")
+cladf <- merge(cladf, clad, by.x = "id", by.y = "code")
 clsoaf <- fortify(clsoa, region = "code")
-clsoaf <- merge(clsoaf, lsoa@data, by.x = "id", by.y = "code")
+clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
-  geom_polygon(data = eef, aes(long, lat, group = group),
-               fill = "transparent", colour = "dark grey") +
+  geom_polygon(data = cregf, aes(long, lat, group = group),
+               fill = "transparent", colour = "black") +
+  geom_polygon(data = cladf, aes(long, lat, group = group),
+               fill = "transparent", colour = "light grey") +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group,
+                                  fill = ru)) +
   geom_point(data = cfb@data, 
              aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
                  colour = Total.x)) +
-  geom_polygon(data = clsoaf, aes(long, lat, group = group,
-                                  fill = ru)) +
-  scale_colour_gradient(low = "pink", high = "red", name = "Total Clients") +
+  scale_colour_gradient(low = "light blue", high = "dark blue", 
+                        name = "Total Clients") +
   scale_fill_manual(values = c("Rural" = "#1b9e77", "Urban" = "#d95f02"),
                     name = "Fuel Priority LSOA") +
   coord_equal() + mapl
