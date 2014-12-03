@@ -49,9 +49,16 @@ elad <- readOGR(dsn = "shapes/englandLADs/",
 proj4string(elad) <- CRS("+init=epsg:27700")
 
 # region/LAD lookup from https://geoportal.statistics.gov.uk/geoportal/catalog/search/resource/details.page?uuid={B6A77A55-DB44-4C3C-901F-82742CB6A54B}
-unzip(zipfile = "data/Countries_(2012)_to_government_office_regions_(2010)_to_counties_(2012)_to_local_authority_districts_(2012)_to_wards_(2012)_UK_lookup.zip",
-      files = "CTRY12_GOR10_CTY12_LAD12_WD12_UK_LU.csv", exdir = "data/")
-rllook <- read.csv("data/CTRY12_GOR10_CTY12_LAD12_WD12_UK_LU.csv")
+# unzip(zipfile = "data/Countries_(2012)_to_government_office_regions_(2010)_to_counties_(2012)_to_local_authority_districts_(2012)_to_wards_(2012)_UK_lookup.zip",
+#       files = "CTRY12_GOR10_CTY12_LAD12_WD12_UK_LU.csv", exdir = "data/")
+rllu <- read.csv("data/CTRY12_GOR10_CTY12_LAD12_WD12_UK_LU.csv", header = T)
+rllu <- rllu[, c(4, 6, 10, 12)]
+rllu <- rllu[grep("E", rllu$LAD12CD), ]
+rllu <- unique(rllu)
+elad$code <- as.character(elad$code)
+elad$code[elad$code == "E07000100"] <- "E07000240"
+elad$code[elad$code == "E07000104"] <- "E07000241"
+elad@data <- merge(elad@data, rllu, by.x = "code", by.y = "LAD12CD")
 
 
 
