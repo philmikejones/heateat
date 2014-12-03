@@ -119,39 +119,46 @@ fb <- spTransform(fb, CRSobj = CRS(proj4string(reg)))
 # qmsoa <- geom_polygon(data = emsoaf, aes(long, lat, group = group), 
 #                                       fill = "red")
 
-# Priority LSOAs
+# LSOAs
 lsoa <- readOGR(dsn = "shapes/englsoa/", 
                 "england_lsoa_2011Polygon")
 proj4string(lsoa) <- CRS("+init=epsg:27700")
 
-fpp           <- read.csv("data/fp-priority-lsoa.csv")
-lsoa$code     <- as.character(lsoa$code)
-fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
-lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
-lsoa          <- lsoa[lsoa$priority == T, ]
+# Priority LSOAs superceded
+# fpp           <- read.csv("data/fp-priority-lsoa.csv")
+# lsoa$code     <- as.character(lsoa$code)
+# fpp$LSOA.CODE <- as.character(fpp$LSOA.CODE)
+# lsoa$priority <- lsoa$code %in% fpp$LSOA.CODE
+# lsoa          <- lsoa[lsoa$priority == T, ]
+# 
+# lru <- read.csv("data/RUC11_LSOA11_EW.csv", header = T)
+# # Specify rural/urban dichotomy
+# lru$ru <- NA
+# lru$ru[lru$RUC11CD == "A1"] <- "Urban"  # Urban major conurbation
+# lru$ru[lru$RUC11CD == "B1"] <- "Urban"  # Urban minor conurbation
+# lru$ru[lru$RUC11CD == "C1"] <- "Urban"  # Urban city and town
+# lru$ru[lru$RUC11CD == "C2"] <- "Urban"  # Urban city and town sparse
+# 
+# lru$ru[lru$RUC11CD == "D1"] <- "Rural"  # Rural town and fringe
+# lru$ru[lru$RUC11CD == "D2"] <- "Rural"  # Rural town and fringe sparse
+# lru$ru[lru$RUC11CD == "E1"] <- "Rural"  # Rural village and dispersed
+# lru$ru[lru$RUC11CD == "E2"] <- "Rural"  # Rural village and dis. sparse
+# 
+# lsoa@data <- merge(lsoa@data, lru, by.x = "code", by.y = "LSOA11CD")
 
-lru <- read.csv("data/RUC11_LSOA11_EW.csv", header = T)
-# Specify rural/urban dichotomy
-lru$ru <- NA
-lru$ru[lru$RUC11CD == "A1"] <- "Urban"  # Urban major conurbation
-lru$ru[lru$RUC11CD == "B1"] <- "Urban"  # Urban minor conurbation
-lru$ru[lru$RUC11CD == "C1"] <- "Urban"  # Urban city and town
-lru$ru[lru$RUC11CD == "C2"] <- "Urban"  # Urban city and town sparse
-
-lru$ru[lru$RUC11CD == "D1"] <- "Rural"  # Rural town and fringe
-lru$ru[lru$RUC11CD == "D2"] <- "Rural"  # Rural town and fringe sparse
-lru$ru[lru$RUC11CD == "E1"] <- "Rural"  # Rural village and dispersed
-lru$ru[lru$RUC11CD == "E2"] <- "Rural"  # Rural village and dis. sparse
-
-lsoa@data <- merge(lsoa@data, lru, by.x = "code", by.y = "LSOA11CD")
 lsoa  <- spTransform(lsoa, CRSobj = CRS(proj4string(reg)))
+er <- read.csv("data/csco-eligible-rural-area-lsoa.csv", skip = 7, header = T)
+er <- er[, 4:5]
+names(er) <- c("name", "code")
+erlsoa <- lsoa
+erlsoa@data <- merge(erlsoa@data, er, by = "code")
 
 
 
 # # Final maps ====
 # East of England
 creg  <- reg[reg$CODE == "E12000006", ]
-clsoa <- lsoa[creg, ]
+clsoa <- erlsoa[creg, ]
 clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
@@ -164,10 +171,10 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group),
+               fill = "#99d8c9", colour = "light grey") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
-  geom_polygon(data = clsoaf, aes(long, lat, group = group,
-                                  fill = ru)) +
   geom_polygon(data = cregf, aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
@@ -185,7 +192,7 @@ ggsave(filename = "east-england.pdf", path = "maps/",
 
 # East Midlands
 creg  <- reg[reg$CODE == "E12000004", ]
-clsoa <- lsoa[creg, ]
+clsoa <- lsoaer[creg, ]
 clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
@@ -200,8 +207,8 @@ clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 ggplot() +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
-  geom_polygon(data = clsoaf, aes(long, lat, group = group,
-                                  fill = ru)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group),
+               fill = "#99d8c9", colour = "light grey") +
   geom_polygon(data = cregf, aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
@@ -219,7 +226,7 @@ ggsave(filename = "east-midlands.pdf", path = "maps/",
 
 # London
 creg  <- reg[reg$CODE == "E12000007", ]
-clsoa <- lsoa[creg, ]
+clsoa <- lsoaer[creg, ]
 clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
@@ -234,8 +241,8 @@ clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 ggplot() +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
-  geom_polygon(data = clsoaf, aes(long, lat, group = group,
-                                  fill = ru)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group),
+               fill = "#99d8c9", colour = "light grey") +
   geom_polygon(data = cregf, aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
@@ -253,7 +260,7 @@ ggsave(filename = "london.pdf", path = "maps/",
 
 # North East
 creg  <- reg[reg$CODE == "E12000001", ]
-clsoa <- lsoa[creg, ]
+clsoa <- lsoaer[creg, ]
 clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
@@ -268,8 +275,8 @@ clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 ggplot() +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
-  geom_polygon(data = clsoaf, aes(long, lat, group = group,
-                                  fill = ru)) +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group),
+               fill = "#99d8c9", colour = "light grey") +
   geom_polygon(data = cregf, aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
@@ -321,7 +328,7 @@ ggsave(filename = "north-west.pdf", path = "maps/",
 
 # South East
 creg  <- reg[reg$CODE == "E12000008", ]
-clsoa <- lsoa[creg, ]
+clsoa <- erlsoa[creg, ]
 clad  <- elad[clsoa, ]
 cfb   <- fb[creg, ]
 cfb@data <- merge(cfb@data, cfb, by = "match")
@@ -334,10 +341,10 @@ clsoaf <- fortify(clsoa, region = "code")
 clsoaf <- merge(clsoaf, clsoa, by.x = "id", by.y = "code")
 
 ggplot() +
+  geom_polygon(data = clsoaf, aes(long, lat, group = group),
+               fill = "#99d8c9", colour = "light grey") +
   geom_polygon(data = cladf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
-  geom_polygon(data = clsoaf, aes(long, lat, group = group,
-                                  fill = ru)) +
   geom_polygon(data = cregf, aes(long, lat, group = group),
                fill = "transparent", colour = "dark grey") +
   geom_point(data = cfb@data, 
