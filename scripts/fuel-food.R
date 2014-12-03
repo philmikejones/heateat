@@ -57,6 +57,7 @@ elsoa <- readOGR(dsn = "shapes/englsoa/",
 proj4string(elsoa) <- CRS("+init=epsg:27700")
 
 
+
 # # Food bank layer ====
 # fbt <- read.csv("data/foodbanks.csv")
 # fbm <- read.csv("data/foodbanks-matched.csv")
@@ -72,13 +73,12 @@ proj4string(elsoa) <- CRS("+init=epsg:27700")
 
 
 # # Final maps ====
-eregf <- fortify(ereg, region = "CODE")
-eregf <- merge(eregf, ereg, by.x = "id", by.y = "CODE")
-eladf <- fortify(elad, region = "code")
-eladf <- merge(eladf, elad, by.x = "id", by.y = "code")
+yhr  <- ereg[ereg$CODE == "E12000003", ]
+yhrf <- fortify(yhr, region = "CODE")
+yhrf <- merge(yhrf, yhr, by.x = "id", by.y = "CODE")
+yhl  <- gIntersection(yhr, yhl, byid = T, drop_not_poly = T)
+
 ggplot() +
-  geom_polygon(data = eladf, aes(x = long, y = lat, group = group),
+  geom_polygon(data = yhrf, aes(x = long, y = lat, group = group),
                fill = "transparent", colour = "light grey") +
-  geom_polygon(data = eregf, aes(x = long, y = lat, group = group),
-               fill = "transparent", colour = "dark grey") +
   map + coord_equal()
