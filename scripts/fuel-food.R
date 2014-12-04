@@ -58,10 +58,24 @@ ser <- ereg[ereg$CODE == "E12000008", ]
 elad <- readOGR(dsn = "shapes/englandLADs/", 
                 "england_lad_2011Polygon")
 proj4string(elad) <- CRS("+init=epsg:27700")
+row.names(elad) <- as.character(1:length(elad))
 
 # LADs by region
-# http://gis.stackexchange.com/questions/63793/how-to-overlay-a-polygon-over-spatialpointsdataframe-and-preserving-the-spdf-dat
+# subset method
+eel <- elad[eer, ]
+plot(eer); plot(eel, add = T)
 
+# gIntersection/gIntersects method
+eel <- gIntersection(elad, eer, byid = T, drop_not_poly = T)
+row.names(eel) <- as.character(gsub(" 0", "", row.names(eel)))
+eel <- SpatialPolygonsDataFrame(eel, elad@data[row.names(eel), ])
+
+eelf <- fortify(eel, region = "code")
+eelf <- merge(eelf, eel, by.x = "id", by.y = "code")
+ggplot() + 
+  geom_polygon(data = eelf, aes(long, lat, group = group),
+               fill = "transparent", colour = "black") +
+  coord_equal()
 
 
 
