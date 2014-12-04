@@ -58,7 +58,27 @@ ser <- ereg[ereg$CODE == "E12000008", ]
 elad <- readOGR(dsn = "shapes/englandLADs/", 
                 "england_lad_2011Polygon")
 proj4string(elad) <- CRS("+init=epsg:27700")
-gIntersection(elad, eer, byid = T)
+
+# LADs by region
+# http://gis.stackexchange.com/questions/63793/how-to-overlay-a-polygon-over-spatialpointsdataframe-and-preserving-the-spdf-dat
+
+
+
+
+# extracts IDs clipped as vector
+IDs.SpatialPolygonsDataFrame <- function(x,...) {
+  vapply(slot(x, "polygons"), function(x) slot(x, "ID"), "")
+}
+# Function courtesy of gsk3 (https://github.com/gsk3)
+# Source: https://github.com/gsk3/taRifx.geo/blob/2fc3fdd35713a028bef8eefa4bef9fdc446b1b4c/R/R-GIS.R#L518
+
+eeu <- gIntersection(elad, eer, byid = T, drop_not_poly = T)
+ids <- as.numeric(gsub(" 0", "", 
+                       as.character(IDs.SpatialPolygonsDataFrame(eeu))))
+SpatialPolygonsDataFrame(eeu, elad@data[ids])
+
+
+
 
 # Fuel poverty layer ====
 # LSOAs
