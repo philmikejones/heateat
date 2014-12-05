@@ -127,31 +127,6 @@ swlf <- merge(swlf, swl, by.x = "id", by.y = "code")
 
 
 
-
-
-
-
-
-
-# regs <- c("eer", "lor", "nwr", "ner", "emr", "yhr", "swr", "wmr", "ser")
-# for(i in 1:length(regs)){
-#   #   as.name(paste0(substr(regs[i], 1, 2), "l")) <-
-#     gIntersection(elad, regs[i], byid = T, drop_not_poly = T)
-# #   row.names(as.name(paste0(substr(regs[1], 1, 2), "l"))) <- 
-# #     as.character(gsub(" 0", "", 
-# #                       row.names(as.name(paste0(substr(regs[1], 1, 2), "l")))))
-# #   as.name(paste0(substr(regs[1], 1, 2), "l")) <-
-# #     SpatialPolygonsDataFrame(as.name(paste0(substr(regs[1], 1, 2), "l")),
-# #                              elad@data[row.names(as.name(paste0(substr(regs[1], 1, 2), "l"))), ])
-# #   paste0(as.name(paste0(substr(regs[1], 1, 2), "l")), "f") <-
-# #     fortify(as.name(paste0(substr(regs[1], 1, 2), "l")), region = "code")
-# #   paste0(as.name(paste0(substr(regs[1], 1, 2), "l")), "f") <-
-# #     merge(paste0(as.name(paste0(substr(regs[1], 1, 2), "l")), "f"), 
-# #           as.name(paste0(substr(regs[1], 1, 2), "l")), by.x = "id", by.y = "code")
-# }
-
-
-
 # Fuel poverty layer ====
 # LSOAs
 elsoa <- readOGR(dsn = "shapes/englsoa/", 
