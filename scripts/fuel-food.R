@@ -54,6 +54,27 @@ ser <- ereg[ereg$CODE == "E12000008", ]
 # 7 E12000005            West Midlands
 # 8 E12000008               South East
 
+eerf <- fortify(eer, region = "CODE")
+eerf <- merge(eerf, eer, by.x = "id", by.y = "CODE")
+lorf <- fortify(lor, region = "CODE")
+lorf <- merge(lorf, lor, by.x = "id", by.y = "CODE")
+nwrf <- fortify(nwr, region = "CODE")
+nwrf <- merge(nwrf, nwr, by.x = "id", by.y = "CODE")
+nerf <- fortify(ner, region = "CODE")
+nerf <- merge(nerf, ner, by.x = "id", by.y = "CODE")
+emrf <- fortify(emr, region = "CODE")
+emrf <- merge(emrf, emr, by.x = "id", by.y = "CODE")
+yhrf <- fortify(yhr, region = "CODE")
+yhrf <- merge(yhrf, yhr, by.x = "id", by.y = "CODE")
+swrf <- fortify(swr, region = "CODE")
+swrf <- merge(swrf, swr, by.x = "id", by.y = "CODE")
+wmrf <- fortify(wmr, region = "CODE")
+wmrf <- merge(wmrf, wmr, by.x = "id", by.y = "CODE")
+serf <- fortify(ser, region = "CODE")
+serf <- merge(serf, ser, by.x = "id", by.y = "CODE")
+
+
+
 # LADs
 elad <- readOGR(dsn = "shapes/englandLADs/", 
                 "england_lad_2011Polygon")
@@ -133,6 +154,28 @@ elsoa <- readOGR(dsn = "shapes/englsoa/",
                 "england_lsoa_2011Polygon")
 proj4string(elsoa) <- CRS("+init=epsg:27700")
 
+eral <- read.csv("data/csco-eligible-rural-area-lsoa.csv", skip = 7, header = T)
+eral <- eral[4:5]
+names(eral) <- c("name", "code")
+
+elsoa$code <- as.character(elsoa$code)
+eral$code  <- as.character(eral$code)
+elsoa$era  <- elsoa$code %in% eral$code
+elsoa      <- elsoa[elsoa$era == T, ]
+
 
 
 # # Final maps ====
+# Yorkshire and The Humber
+soaclip <- elsoa[yhr, ]
+soaclipf <- fortify(soaclip, region = "code")
+soaclipf <- merge(soaclipf, soaclip, by.x = "id", by.y = "code")
+
+ggplot() +
+  geom_polygon(data = soaclipf, aes(long, lat, group = group),
+               fill = "#ccece6", colour = "dark grey") +
+  geom_polygon(data = yhlf, aes(long, lat, group = group),
+               fill = "transparent", colour = "light grey") +
+  geom_polygon(data = yhrf, aes(long, lat, group = group),
+               fill = "transparent", colour = "black") +
+  map + coord_equal()
