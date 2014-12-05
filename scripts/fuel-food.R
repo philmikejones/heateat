@@ -34,7 +34,7 @@ ereg <- readOGR(dsn = "shapes/ewregions/",
 proj4string(ereg) <- CRS("+init=epsg:27700")
 
 eer <- ereg[ereg$CODE == "E12000006", ]
-lr  <- ereg[ereg$CODE == "E12000007", ]
+lor <- ereg[ereg$CODE == "E12000007", ]
 nwr <- ereg[ereg$CODE == "E12000002", ]
 ner <- ereg[ereg$CODE == "E12000001", ]
 emr <- ereg[ereg$CODE == "E12000004", ]
@@ -61,36 +61,94 @@ proj4string(elad) <- CRS("+init=epsg:27700")
 row.names(elad) <- as.character(1:length(elad))
 
 # LADs by region
-# subset method
-eel <- elad[eer, ]
-plot(eer); plot(eel, add = T)
-
 # gIntersection/gIntersects method
+# 0 E12000006          East of England
 eel <- gIntersection(elad, eer, byid = T, drop_not_poly = T)
 row.names(eel) <- as.character(gsub(" 0", "", row.names(eel)))
 eel <- SpatialPolygonsDataFrame(eel, elad@data[row.names(eel), ])
-
 eelf <- fortify(eel, region = "code")
 eelf <- merge(eelf, eel, by.x = "id", by.y = "code")
-ggplot() + 
-  geom_polygon(data = eelf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
-  coord_equal()
+
+# 1 E12000007                   London
+lol <- gIntersection(elad, lor, byid = T, drop_not_poly = T)
+row.names(lol) <- as.character(gsub(" 1", "", row.names(lol)))
+lol <- SpatialPolygonsDataFrame(lol, elad@data[row.names(lol), ])
+lolf <- fortify(lol, region = "code")
+lolf <- merge(lolf, lol, by.x = "id", by.y = "code")
+
+# 2 E12000002               North West
+nwl <- gIntersection(elad, nwr, byid = T, drop_not_poly = T)
+row.names(nwl) <- as.character(gsub(" 2", "", row.names(nwl)))
+nwl <- SpatialPolygonsDataFrame(nwl, elad@data[row.names(nwl), ])
+nwlf <- fortify(nwl, region = "code")
+nwlf <- merge(nwlf, nwl, by.x = "id", by.y = "code")
+
+# 3 E12000001               North East
+nel <- gIntersection(elad, ner, byid = T, drop_not_poly = T)
+row.names(nel) <- as.character(gsub(" 3", "", row.names(nel)))
+nel <- SpatialPolygonsDataFrame(nel, elad@data[row.names(nel), ])
+nelf <- fortify(nel, region = "code")
+nelf <- merge(nelf, nel, by.x = "id", by.y = "code")
+
+# 4 E12000004            East Midlands
+eml <- gIntersection(elad, emr, byid = T, drop_not_poly = T)
+row.names(eml) <- as.character(gsub(" 4", "", row.names(eml)))
+eml <- SpatialPolygonsDataFrame(eml, elad@data[row.names(eml), ])
+emlf <- fortify(eml, region = "code")
+emlf <- merge(emlf, eml, by.x = "id", by.y = "code")
+
+# 5 E12000003 Yorkshire and The Humber
+yhl <- gIntersection(elad, yhr, byid = T, drop_not_poly = T)
+row.names(yhl) <- as.character(gsub(" 5", "", row.names(yhl)))
+yhl <- SpatialPolygonsDataFrame(yhl, elad@data[row.names(yhl), ])
+yhlf <- fortify(yhl, region = "code")
+yhlf <- merge(yhlf, yhl, by.x = "id", by.y = "code")
+
+# 6 E12000009               South West
+swl <- gIntersection(elad, swr, byid = T, drop_not_poly = T)
+row.names(swl) <- as.character(gsub(" 6", "", row.names(swl)))
+swl <- SpatialPolygonsDataFrame(swl, elad@data[row.names(swl), ])
+swlf <- fortify(swl, region = "code")
+swlf <- merge(swlf, swl, by.x = "id", by.y = "code")
+
+# 7 E12000005            West Midlands
+wml <- gIntersection(elad, wmr, byid = T, drop_not_poly = T)
+row.names(wml) <- as.character(gsub(" 7", "", row.names(wml)))
+wml <- SpatialPolygonsDataFrame(wml, elad@data[row.names(wml), ])
+wmlf <- fortify(wml, region = "code")
+wmlf <- merge(wmlf, wml, by.x = "id", by.y = "code")
+
+# 8 E12000008               South East
+swl <- gIntersection(elad, swr, byid = T, drop_not_poly = T)
+row.names(swl) <- as.character(gsub(" 8", "", row.names(swl)))
+swl <- SpatialPolygonsDataFrame(swl, elad@data[row.names(swl), ])
+swlf <- fortify(swl, region = "code")
+swlf <- merge(swlf, swl, by.x = "id", by.y = "code")
 
 
 
-# extracts IDs clipped as vector
-IDs.SpatialPolygonsDataFrame <- function(x,...) {
-  vapply(slot(x, "polygons"), function(x) slot(x, "ID"), "")
-}
-# Function courtesy of gsk3 (https://github.com/gsk3)
-# Source: https://github.com/gsk3/taRifx.geo/blob/2fc3fdd35713a028bef8eefa4bef9fdc446b1b4c/R/R-GIS.R#L518
 
-eeu <- gIntersection(elad, eer, byid = T, drop_not_poly = T)
-ids <- as.numeric(gsub(" 0", "", 
-                       as.character(IDs.SpatialPolygonsDataFrame(eeu))))
-SpatialPolygonsDataFrame(eeu, elad@data[ids])
 
+
+
+
+
+# regs <- c("eer", "lor", "nwr", "ner", "emr", "yhr", "swr", "wmr", "ser")
+# for(i in 1:length(regs)){
+#   #   as.name(paste0(substr(regs[i], 1, 2), "l")) <-
+#     gIntersection(elad, regs[i], byid = T, drop_not_poly = T)
+# #   row.names(as.name(paste0(substr(regs[1], 1, 2), "l"))) <- 
+# #     as.character(gsub(" 0", "", 
+# #                       row.names(as.name(paste0(substr(regs[1], 1, 2), "l")))))
+# #   as.name(paste0(substr(regs[1], 1, 2), "l")) <-
+# #     SpatialPolygonsDataFrame(as.name(paste0(substr(regs[1], 1, 2), "l")),
+# #                              elad@data[row.names(as.name(paste0(substr(regs[1], 1, 2), "l"))), ])
+# #   paste0(as.name(paste0(substr(regs[1], 1, 2), "l")), "f") <-
+# #     fortify(as.name(paste0(substr(regs[1], 1, 2), "l")), region = "code")
+# #   paste0(as.name(paste0(substr(regs[1], 1, 2), "l")), "f") <-
+# #     merge(paste0(as.name(paste0(substr(regs[1], 1, 2), "l")), "f"), 
+# #           as.name(paste0(substr(regs[1], 1, 2), "l")), by.x = "id", by.y = "code")
+# }
 
 
 
