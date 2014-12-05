@@ -163,6 +163,16 @@ eral$code  <- as.character(eral$code)
 elsoa$era  <- elsoa$code %in% eral$code
 elsoa      <- elsoa[elsoa$era == T, ]
 
+edra <- read.csv("data/eligible-deprived-rural-areas-25.csv", 
+                 skip = 7, header = T)
+edra <- edra[, 4:5]
+names(edra) <- c("name", "code")
+
+elsoa$code <- as.character(elsoa$code)
+edra$code  <- as.character(edra$code)
+elsoa$edra <- elsoa$code %in% edra$code
+elsoa      <- elsoa[elsoa$edra == T, ]
+
 
 
 # # Final maps ====
@@ -173,7 +183,7 @@ soaclipf <- merge(soaclipf, soaclip, by.x = "id", by.y = "code")
 
 ggplot() +
   geom_polygon(data = soaclipf, aes(long, lat, group = group),
-               fill = "#ccece6", colour = "dark grey") +
+               fill = "orange", colour = "dark grey") +
   geom_polygon(data = yhlf, aes(long, lat, group = group),
                fill = "transparent", colour = "light grey") +
   geom_polygon(data = yhrf, aes(long, lat, group = group),
