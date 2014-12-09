@@ -39,7 +39,7 @@ for(i in 1:length(reg)){
   regf[[i]] <- tmp
 }
 rm(tmp, i)
-rm(regCodes, reg, ereg, elad)
+rm(regCodes, ereg, elad)
 
 
 
@@ -97,53 +97,30 @@ mapl <- theme(line = element_blank(),
 port <- c(29.7/2.54, 42/2.54)
 land <- c(42/2.54, 29.7/2.54)
 
-# Regions
-# East of England
-eerf <- fortify(eer, region = "CODE")
-eerf <- merge(eerf, eer, by.x = "id", by.y = "CODE")
-
-# London
-lorf <- fortify(lor, region = "CODE")
-lorf <- merge(lorf, lor, by.x = "id", by.y = "CODE")
-
-# North West
-nwrf <- fortify(nwr, region = "CODE")
-nwrf <- merge(nwrf, nwr, by.x = "id", by.y = "CODE")
-
-# North East
-nerf <- fortify(ner, region = "CODE")
-nerf <- merge(nerf, ner, by.x = "id", by.y = "CODE")
-
-# East Midlands
-emrf <- fortify(emr, region = "CODE")
-emrf <- merge(emrf, emr, by.x = "id", by.y = "CODE")
-
-# Yorkshire and The Humber
-yhrf <- fortify(yhr, region = "CODE")
-yhrf <- merge(yhrf, yhr, by.x = "id", by.y = "CODE")
-soaclip <- elsoa[yhr, ]
-soaclipf <- fortify(soaclip, region = "code")
-soaclipf <- merge(soaclipf, soaclip, by.x = "id", by.y = "code")
-
-ggplot() +
-  geom_polygon(data = soaclipf, aes(long, lat, group = group),
-               fill = "#c7e9c0", colour = "dark grey") +
-  geom_polygon(data = soaclipf, aes(long, lat, group = group),
-               fill = "#00441b", colour = "dark grey") +
-  geom_polygon(data = yhlf, aes(long, lat, group = group),
-               fill = "transparent", colour = "light grey") +
-  geom_polygon(data = yhrf, aes(long, lat, group = group),
-               fill = "transparent", colour = "black") +
-  map + coord_equal()
-
-# South West
-swrf <- fortify(swr, region = "CODE")
-swrf <- merge(swrf, swr, by.x = "id", by.y = "CODE")
-
-# West Midlands
-wmrf <- fortify(wmr, region = "CODE")
-wmrf <- merge(wmrf, wmr, by.x = "id", by.y = "CODE")
-
-# South East
-serf <- fortify(ser, region = "CODE")
-serf <- merge(serf, ser, by.x = "id", by.y = "CODE")
+for(i in 1:length(regf)){
+  erac <- era[reg[[i]], ]
+  eraf <- fortify(erac, region = "code")
+  eraf <- merge(eraf, erac, by.x = "id", by.y = "code")
+  
+  alic <- ali[reg[[i]], ]
+  alif <- fortify(alic, region = "code")
+  alif <- merge(alif, alic, by.x = "id", by.y = "code")
+  
+  drac <- dra[reg[[i]], ]
+  draf <- fortify(drac, region = "code")
+  draf <- merge(draf, drac, by.x = "id", by.y = "code")
+  
+  ggplot() +
+    geom_polygon(data = regf[[i]], aes(long, lat, group = group),
+                 fill = "transparent", colour = "dark grey") +
+    geom_polygon(data = eraf, aes(long, lat, group = group),
+                 fill = "#c7e9c0", colour = "dark grey") +
+    geom_polygon(data = draf, aes(long, lat, group = group),
+                 fill = "#238b45", colour = "dark grey") +
+    geom_polygon(data = alif, aes(long, lat, group = group),
+                 fill = "#6baed6", colour = "black") +
+    mapl + coord_equal()
+  
+  ggsave(filename = paste0("region", i, ".pdf"), path = "maps/",
+                           width = land[1], height = land[2])
+}
