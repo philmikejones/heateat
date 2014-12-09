@@ -3,7 +3,6 @@ require("maptools")
 require("rgeos")
 require("rgdal")
 require("scales")
-require("deldir")  # for voronoi polygons
 require("ggplot2")
 
 
@@ -81,6 +80,20 @@ rm(elsoa)
 
 
 
+# Food bank layer ====
+fbt <- read.csv("data/foodbanks.csv")
+fbm <- read.csv("data/foodbanks-matched.csv")
+fb <- merge(fbt, fbm, by = "match")
+rm(fbt, fbm)
+fb <- fb[fb$URINDEW10nov != 9, ] # 9 is Scotland/NI/Channel Is/IoM, see docs
+fb$Total[fb$Total == -99] <- NA
+# create projection for clipping
+coordinates(fb) <- c("OSEAST1M10nov", "OSNRTH1M10nov")
+proj4string(fb) <- CRS("+init=epsg:27700")
+fb <- spTransform(fb, CRSobj = CRS(proj4string(reg[[1]])))
+
+
+
 # # Final maps ====
 # Themes
 map <- theme(line = element_blank(), 
@@ -110,15 +123,22 @@ for(i in 1:length(regf)){
   draf <- fortify(drac, region = "code")
   draf <- merge(draf, drac, by.x = "id", by.y = "code")
   
+  fbc <- fb[reg[[i]], ]
+  fbc@data <- merge(fbc@data, fbc, by = "match")
+  
   ggplot() +
-    geom_polygon(data = regf[[i]], aes(long, lat, group = group),
-                 fill = "transparent", colour = "dark grey") +
     geom_polygon(data = eraf, aes(long, lat, group = group),
                  fill = "#c7e9c0", colour = "dark grey") +
     geom_polygon(data = draf, aes(long, lat, group = group),
-                 fill = "#238b45", colour = "dark grey") +
+                 fill = "#238b45", colour = "light grey") +
     geom_polygon(data = alif, aes(long, lat, group = group),
-                 fill = "#6baed6", colour = "black") +
+                 fill = "#6baed6", colour = "light grey") +
+    geom_polygon(data = regf[[i]], aes(long, lat, group = group),
+                 fill = "transparent", colour = "black") +
+    geom_point(data = fbc@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
+                               colour = Total.x)) +
+    scale_colour_gradient(low = "#fdae6b", high = "#a63603", na.value = "grey",
+                        name = "Total Clients") +
     mapl + coord_equal()
   
   ggsave(filename = paste0("region", i, ".pdf"), path = "maps/",
