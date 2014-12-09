@@ -20,9 +20,7 @@ elad <- readOGR(dsn = "shapes/englandLADs/",
 proj4string(elad) <- CRS("+init=epsg:27700")
 row.names(elad) <- as.character(1:length(elad))
 
-
-
-# Clip regions ====
+# Clip regions
 regCodes <- as.character(ereg$CODE)
 reg      <- list()
 for(i in 1:length(regCodes)){
@@ -41,33 +39,45 @@ for(i in 1:length(reg)){
   regf[[i]] <- tmp
 }
 rm(tmp, i)
+rm(regCodes, reg, ereg, elad)
 
 
 
-# Fuel poverty layer ====
+# Fuel poverty layers ====
 # LSOAs
 elsoa <- readOGR(dsn = "shapes/englsoa/", 
                 "england_lsoa_2011Polygon")
 proj4string(elsoa) <- CRS("+init=epsg:27700")
 
+# Eligible rural areas lookup (table 4)
 eral <- read.csv("data/csco-eligible-rural-area-lsoa.csv", skip = 7, header = T)
 eral <- eral[4:5]
 names(eral) <- c("name", "code")
 
 elsoa$code <- as.character(elsoa$code)
 eral$code  <- as.character(eral$code)
-elsoa$era  <- elsoa$code %in% eral$code
-elsoa      <- elsoa[elsoa$era == T, ]
+era        <- elsoa[elsoa$code %in% eral$code == T, ]
+rm(eral)
 
-edra <- read.csv("data/eligible-deprived-rural-areas-25.csv", 
+# Most deprived quartile rural areas lookup (table 5)
+dral <- read.csv("data/eligible-deprived-rural-areas-25.csv", 
                  skip = 7, header = T)
-edra <- edra[, 4:5]
-names(edra) <- c("name", "code")
+dral <- dral[, 4:5]
+names(dral) <- c("name", "code")
 
-elsoa$code <- as.character(elsoa$code)
-edra$code  <- as.character(edra$code)
-elsoa$edra <- elsoa$code %in% edra$code
-elsoa      <- elsoa[elsoa$edra == T, ]
+dral$code  <- as.character(dral$code)
+dra        <- elsoa[elsoa$code %in% dral$code == T, ]
+rm(dral)
+
+# Eligible areas of low income lookup (table 1)
+alil <- read.csv("data/eligible-areas-low-income-eng.csv", skip = 7, header = T)
+alil <- alil[, 4:5]
+names(alil) <- c("name", "code")
+
+alil$code <- as.character(alil$code)
+ali       <- elsoa[elsoa$code %in% alil$code == T, ]
+rm(alil)
+rm(elsoa)
 
 
 
