@@ -2,6 +2,7 @@
 /emails
 /maps
 /shapes
+/documentation
 .gitignore~
 .Rproj.user
 .RData
