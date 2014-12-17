@@ -24,7 +24,7 @@ regCodes <- as.character(ereg$CODE)
 reg      <- list()
 for(i in 1:length(regCodes)){
   tmp <- gIntersection(elad, ereg[ereg$CODE == regCodes[i], ],
-                       byid = T, drop_not_poly = T)
+                       byid = T, drop_lower_td = T)
   row.names(tmp) <- as.character(gsub(paste0(" ", i-1), "", row.names(tmp)))
   tmp <- SpatialPolygonsDataFrame(tmp, elad@data[row.names(tmp), ])
   reg[[i]] <- tmp
@@ -57,6 +57,7 @@ elsoa$code <- as.character(elsoa$code)
 eral$code  <- as.character(eral$code)
 era        <- elsoa[elsoa$code %in% eral$code == T, ]
 rm(eral)
+
 
 # Most deprived quartile rural areas lookup (table 5)
 dral <- read.csv("data/eligible-deprived-rural-areas-25.csv", 
