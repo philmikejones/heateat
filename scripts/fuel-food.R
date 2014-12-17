@@ -50,7 +50,7 @@ proj4string(elsoa) <- CRS("+init=epsg:27700")
 
 # Eligible rural areas lookup (table 4)
 eral <- read.csv("data/csco-eligible-rural-area-lsoa.csv", skip = 7, header = T)
-eral <- eral[4:5]
+eral <- eral[, c(4:5)]
 names(eral) <- c("name", "code")
 
 elsoa$code <- as.character(elsoa$code)
