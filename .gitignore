@@ -4,6 +4,7 @@
 /shapes
 /documentation
 .gitignore~
+.readme.md~
 .Rproj.user
 .RData
 .DS_Store

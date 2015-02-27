@@ -11,3 +11,8 @@ The code produces one map for each English region, and one for Greater London. E
 4. District local authorities, unitary authorities, and London Boroughs (LADs) are shown for context.
 
 Boundary files were obtained through the [UK Data Service Census Support](http://census.ukdataservice.ac.uk/get-data/boundary-data.aspx) and are available under the Open Government License.
+
+Copyright
+=========
+
+Code copyright 2014-15 Phil Mike Jones.
