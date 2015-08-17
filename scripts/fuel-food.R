@@ -50,8 +50,8 @@ rm(tmp, i)
 
 regf <- list()
 for(i in 1:length(reg)){
-  tmp <- fortify(reg[[i]], region = "code")
-  tmp <- merge(tmp, reg[[i]], by.x = "id", by.y = "code")
+  tmp <- fortify(reg[[i]], region = "CODE")
+  tmp <- merge(tmp, reg[[i]], by.x = "id", by.y = "CODE")
   regf[[i]] <- tmp
 }
 rm(tmp, i)
