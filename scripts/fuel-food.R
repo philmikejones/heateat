@@ -163,12 +163,7 @@ for(i in 1:length(regf)){
                            ymax = (max(regf[[i]]$long)),
                            xmin = (min(regf[[i]]$lat)),
                            xmax = (min(regf[[i]]$lat))) +
-    mapl + coord_equal() +
-    annotate("text", x = min(regf[[i]]$long) + 5000,
-                     y = min(regf[[i]]$lat) + 5000,
-             label = "Heat or Eat: Food and Austerity in Rural England
-                      Copyright 2014-15 Phil Mike Jones, Hannah Lambie-Mumford and Carolyn Snell",
-             size = 3)
+    mapl + coord_equal()
   
   ggsave(filename = paste0("region", i, ".pdf"), path = "maps/",
                            width = land[1], height = land[2])
