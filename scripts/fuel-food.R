@@ -4,7 +4,6 @@ require("rgeos")
 require("rgdal")
 require("scales")
 require("ggplot2")
-require("dplyr")
 
 
 # Download boundary data ====
@@ -160,7 +159,16 @@ for(i in 1:length(regf)){
     guides(fill = guide_legend(title = NULL)) +  # remove fill legends title
     scale_colour_gradient(low = "#fdae6b", high = "#a63603", na.value = "grey",
                         name = "Total Clients") +
-    mapl + coord_equal()
+    annotation_raster(ccn, ymin = (min(regf[[i]]$long)),
+                           ymax = (max(regf[[i]]$long)),
+                           xmin = (min(regf[[i]]$lat)),
+                           xmax = (min(regf[[i]]$lat))) +
+    mapl + coord_equal() +
+    annotate("text", x = min(regf[[i]]$long) + 5000,
+                     y = min(regf[[i]]$lat) + 5000,
+             label = "Heat or Eat: Food and Austerity in Rural England
+                      Copyright 2014-15 Phil Mike Jones, Hannah Lambie-Mumford and Carolyn Snell",
+             size = 3)
   
   ggsave(filename = paste0("region", i, ".pdf"), path = "maps/",
                            width = land[1], height = land[2])
