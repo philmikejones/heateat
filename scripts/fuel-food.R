@@ -4,27 +4,44 @@ require("rgeos")
 require("rgdal")
 require("scales")
 require("ggplot2")
+require("dplyr")
 
+
+# Download boundary data ====
+# Download shapes from census.edina.ac.uk/easy_download
+download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
+              destfile = "shapes/ewregions.zip")
+download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
+              destfile = "shapes/englandLADs.zip")
+download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
+              destfile = "shapes/englsoa.zip")
+
+# Because of a bug in unzip() need to create dirs manually
+dir.create("shapes/ewregions/")
+dir.create("shapes/englandLADs/")
+dir.create("shapes/englsoa/")
+
+unzip("shapes/ewregions.zip", exdir = "shapes/ewregions/", overwrite = TRUE)
+unzip("shapes/englandLADs.zip", exdir = "shapes/englandLADs/", overwrite = TRUE)
+unzip("shapes/englsoa.zip", exdir = "shapes/englsoa/", overwrite = TRUE)
 
 
 # Map background layers ====
 # Regions
-ereg <- readOGR(dsn = "shapes/ewregions/",
-               "England_gor_2011")
+ereg <- readOGR(dsn = "shapes/ewregions/", "England_gor_2011")
 proj4string(ereg) <- CRS("+init=epsg:27700")
 
 # LADs
-elad <- readOGR(dsn = "shapes/englandLADs/", 
-                "england_lad_2011Polygon")
+elad <- readOGR(dsn = "shapes/englandLADs/", "England_lad_2011")
 proj4string(elad) <- CRS("+init=epsg:27700")
-row.names(elad) <- as.character(1:length(elad))
+row.names(elad) <- as.character(row.names(elad))
 
 # Clip regions
 regCodes <- as.character(ereg$CODE)
 reg      <- list()
 for(i in 1:length(regCodes)){
   tmp <- gIntersection(elad, ereg[ereg$CODE == regCodes[i], ],
-                       byid = T, drop_lower_td = T)
+                       byid = TRUE, drop_lower_td = TRUE)
   row.names(tmp) <- as.character(gsub(paste0(" ", i-1), "", row.names(tmp)))
   tmp <- SpatialPolygonsDataFrame(tmp, elad@data[row.names(tmp), ])
   reg[[i]] <- tmp
