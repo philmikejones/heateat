@@ -8,22 +8,20 @@ require("dplyr")
 
 
 # Download boundary data ====
-# Download shapes from census.edina.ac.uk/easy_download
-download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
-              destfile = "shapes/ewregions.zip")
-download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
-              destfile = "shapes/englandLADs.zip")
-download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
-              destfile = "shapes/englsoa.zip")
-
-# Because of a bug in unzip() need to create dirs manually
-dir.create("shapes/ewregions/")
-dir.create("shapes/englandLADs/")
-dir.create("shapes/englsoa/")
-
-unzip("shapes/ewregions.zip", exdir = "shapes/ewregions/", overwrite = TRUE)
-unzip("shapes/englandLADs.zip", exdir = "shapes/englandLADs/", overwrite = TRUE)
-unzip("shapes/englsoa.zip", exdir = "shapes/englsoa/", overwrite = TRUE)
+# # Download shapes from census.edina.ac.uk/easy_download
+# download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
+#               destfile = "shapes/ewregions.zip")
+# download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
+#               destfile = "shapes/englandLADs.zip")
+# download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
+#               destfile = "shapes/englsoa.zip")
+# # Because of a bug in unzip() need to create dirs manually
+# dir.create("shapes/ewregions/")
+# dir.create("shapes/englandLADs/")
+# dir.create("shapes/englsoa/")
+# unzip("shapes/ewregions.zip", exdir = "shapes/ewregions/", overwrite = TRUE)
+# unzip("shapes/englandLADs.zip", exdir = "shapes/englandLADs/", overwrite = TRUE)
+# unzip("shapes/englsoa.zip", exdir = "shapes/englsoa/", overwrite = TRUE)
 
 
 # Map background layers ====
@@ -58,44 +56,42 @@ rm(tmp, i)
 rm(regCodes, ereg, elad)
 
 
-
 # Fuel poverty layers ====
 # LSOAs
-elsoa <- readOGR(dsn = "shapes/englsoa/", 
-                "england_lsoa_2011Polygon")
+elsoa <- readOGR(dsn = "shapes/englsoa/", "England_lsoa_2011")
 proj4string(elsoa) <- CRS("+init=epsg:27700")
 
 # Eligible rural areas lookup (table 4)
-eral <- read.csv("data/csco-eligible-rural-area-lsoa.csv", skip = 7, header = T)
+eral <- read.csv("data/csco-eligible-rural-area-lsoa.csv",
+                 skip = 7, header = TRUE)
 eral <- eral[, c(4:5)]
 names(eral) <- c("name", "code")
 
-elsoa$code <- as.character(elsoa$code)
+elsoa$CODE <- as.character(elsoa$CODE)
 eral$code  <- as.character(eral$code)
-era        <- elsoa[elsoa$code %in% eral$code == T, ]
+era        <- elsoa[elsoa$CODE %in% eral$code == TRUE, ]
 rm(eral)
-
 
 # Most deprived quartile rural areas lookup (table 5)
 dral <- read.csv("data/eligible-deprived-rural-areas-25.csv", 
-                 skip = 7, header = T)
+                 skip = 7, header = TRUE)
 dral <- dral[, 4:5]
 names(dral) <- c("name", "code")
 
 dral$code  <- as.character(dral$code)
-dra        <- elsoa[elsoa$code %in% dral$code == T, ]
+dra        <- elsoa[elsoa$CODE %in% dral$code == TRUE, ]
 rm(dral)
 
 # Eligible areas of low income lookup (table 1)
-alil <- read.csv("data/eligible-areas-low-income-eng.csv", skip = 7, header = T)
+alil <- read.csv("data/eligible-areas-low-income-eng.csv",
+                 skip = 7, header = TRUE)
 alil <- alil[, 4:5]
 names(alil) <- c("name", "code")
 
 alil$code <- as.character(alil$code)
-ali       <- elsoa[elsoa$code %in% alil$code == T, ]
+ali       <- elsoa[elsoa$CODE %in% alil$code == TRUE, ]
 rm(alil)
 rm(elsoa)
-
 
 
 # Food bank layer ====
@@ -109,7 +105,6 @@ fb$Total[fb$Total == -99] <- NA
 coordinates(fb) <- c("OSEAST1M10nov", "OSNRTH1M10nov")
 proj4string(fb) <- CRS("+init=epsg:27700")
 fb <- spTransform(fb, CRSobj = CRS(proj4string(reg[[1]])))
-
 
 
 # # Final maps ====
@@ -130,31 +125,39 @@ land <- c(42/2.54, 29.7/2.54)
 
 for(i in 1:length(regf)){
   erac <- era[reg[[i]], ]
-  eraf <- fortify(erac, region = "code")
-  eraf <- merge(eraf, erac, by.x = "id", by.y = "code")
+  eraf <- fortify(erac, region = "CODE")
+  eraf <- merge(eraf, erac, by.x = "id", by.y = "CODE")
   
   alic <- ali[reg[[i]], ]
-  alif <- fortify(alic, region = "code")
-  alif <- merge(alif, alic, by.x = "id", by.y = "code")
+  alif <- fortify(alic, region = "CODE")
+  alif <- merge(alif, alic, by.x = "id", by.y = "CODE")
   
   drac <- dra[reg[[i]], ]
-  draf <- fortify(drac, region = "code")
-  draf <- merge(draf, drac, by.x = "id", by.y = "code")
+  draf <- fortify(drac, region = "CODE")
+  draf <- merge(draf, drac, by.x = "id", by.y = "CODE")
   
   fbc <- fb[reg[[i]], ]
   fbc@data <- merge(fbc@data, fbc, by = "match")
   
   ggplot() +
-    geom_polygon(data = eraf, aes(long, lat, group = group),
-                 fill = "#c7e9c0", colour = "dark grey") +
-    geom_polygon(data = draf, aes(long, lat, group = group),
-                 fill = "#238b45", colour = "light grey") +
-    geom_polygon(data = alif, aes(long, lat, group = group),
-                 fill = "#6baed6", colour = "light grey") +
+    geom_polygon(data = eraf, aes(long, lat, group = group,
+                                  fill = "CSCO eligible rural area"), 
+                 colour = "dark grey") +
+    geom_polygon(data = draf, aes(long, lat, group = group,
+                                  fill = "Deprived rural area"),
+                 colour = "light grey") +
+    geom_polygon(data = alif, aes(long, lat, group = group, 
+                                  fill = "Eligible low-income area")
+                 , colour = "light grey") +
     geom_polygon(data = regf[[i]], aes(long, lat, group = group),
                  fill = "transparent", colour = "black") +
     geom_point(data = fbc@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
-                               colour = Total.x)) +
+                               colour = Total.x, size = 4)) +
+    scale_size(guide = FALSE) +  # remove size legend
+    scale_fill_manual(values = c("CSCO eligible rural area" = "#c7e9c0",
+                                 "Deprived rural area"      = "#238b45",
+                                 "Eligible low-income area" = "#6baed6")) +
+    guides(fill = guide_legend(title = NULL)) +  # remove fill legends title
     scale_colour_gradient(low = "#fdae6b", high = "#a63603", na.value = "grey",
                         name = "Total Clients") +
     mapl + coord_equal()
