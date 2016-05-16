@@ -1,4 +1,4 @@
-# Libraries ====
+# Packages ====
 require("maptools")
 require("rgeos")
 require("rgdal")
@@ -7,6 +7,13 @@ require("ggplot2")
 
 
 # Download boundary data ====
+
+# create dirs for download.file()
+if (dir.exists("shapes/") == FALSE) {
+  dir.create("shapes/")
+}
+
+
 # # Download shapes from census.edina.ac.uk/easy_download
 # download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
 #               destfile = "shapes/ewregions.zip")
