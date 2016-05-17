@@ -11,20 +11,20 @@ if (dir.exists("shapes/") == FALSE) {
   dir.create("shapes/")
 }
 
-# Regions
-download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
-         destfile = "shapes/regions.zip", method = "curl")
-unzip("shapes/regions.zip", exdir = "shapes/regions", overwrite = TRUE)
-
-# LADs
-download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
-              destfile = "shapes/lads.zip", method = "curl")
-unzip("shapes/lads.zip", exdir = "shapes/lads", overwrite = TRUE)
-
-# LSOAs
-download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
-              destfile = "shapes/lsoas.zip", method = "curl")
-unzip("shapes/lsoas.zip", exdir = "shapes/lsoas/", overwrite = TRUE)
+# # Regions
+# download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
+#          destfile = "shapes/regions.zip", method = "curl")
+# unzip("shapes/regions.zip", exdir = "shapes/regions", overwrite = TRUE)
+# 
+# # LADs
+# download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
+#               destfile = "shapes/lads.zip", method = "curl")
+# unzip("shapes/lads.zip", exdir = "shapes/lads", overwrite = TRUE)
+# 
+# # LSOAs
+# download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
+#               destfile = "shapes/lsoas.zip", method = "curl")
+# unzip("shapes/lsoas.zip", exdir = "shapes/lsoas/", overwrite = TRUE)
 
 
 # Map background layers ====
@@ -38,10 +38,10 @@ proj4string(elad) <- CRS("+init=epsg:27700")
 row.names(elad) <- as.character(row.names(elad))
 
 # Clip regions
-regCodes <- as.character(ereg$CODE)
+reg_codes <- as.character(ereg@data$code)
 reg      <- list()
-for(i in 1:length(regCodes)){
-  tmp <- gIntersection(elad, ereg[ereg$CODE == regCodes[i], ],
+for(i in 1:length(reg_codes)){
+  tmp <- gIntersection(elad, ereg[ereg@data$code == reg_codes[i], ],
                        byid = TRUE, drop_lower_td = TRUE)
   row.names(tmp) <- as.character(gsub(paste0(" ", i-1), "", row.names(tmp)))
   tmp <- SpatialPolygonsDataFrame(tmp, elad@data[row.names(tmp), ])
@@ -49,14 +49,14 @@ for(i in 1:length(regCodes)){
 }
 rm(tmp, i)
 
-regf <- list()
-for(i in 1:length(reg)){
+reg_f <- list()
+for (i in 1:length(reg)) {
   tmp <- fortify(reg[[i]], region = "CODE")
   tmp <- merge(tmp, reg[[i]], by.x = "id", by.y = "CODE")
-  regf[[i]] <- tmp
+  reg_f[[i]] <- tmp
 }
 rm(tmp, i)
-rm(regCodes, ereg, elad)
+rm(reg_codes, ereg, elad)
 
 
 # Fuel poverty layers ====
