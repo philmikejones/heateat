@@ -51,8 +51,8 @@ rm(tmp, i)
 
 reg_f <- list()
 for (i in 1:length(reg)) {
-  tmp <- fortify(reg[[i]], region = "CODE")
-  tmp <- merge(tmp, reg[[i]], by.x = "id", by.y = "CODE")
+  tmp <- fortify(reg[[i]], region = "code")
+  tmp <- merge(tmp, reg[[i]], by.x = "id", by.y = "code")
   reg_f[[i]] <- tmp
 }
 rm(tmp, i)
