@@ -1,42 +1,39 @@
 # Packages ====
-require("maptools")
 require("rgeos")
 require("rgdal")
-require("scales")
 require("ggplot2")
+require("maptools")
 
 
 # Download boundary data ====
-
 # create dirs for download.file()
 if (dir.exists("shapes/") == FALSE) {
   dir.create("shapes/")
 }
 
+# Regions
+download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
+         destfile = "shapes/regions.zip", method = "curl")
+unzip("shapes/regions.zip", exdir = "shapes/regions", overwrite = TRUE)
 
-# # Download shapes from census.edina.ac.uk/easy_download
-# download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
-#               destfile = "shapes/ewregions.zip")
-# download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
-#               destfile = "shapes/englandLADs.zip")
-# download.file("http://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
-#               destfile = "shapes/englsoa.zip")
-# # Because of a bug in unzip() need to create dirs manually
-# dir.create("shapes/ewregions/")
-# dir.create("shapes/englandLADs/")
-# dir.create("shapes/englsoa/")
-# unzip("shapes/ewregions.zip", exdir = "shapes/ewregions/", overwrite = TRUE)
-# unzip("shapes/englandLADs.zip", exdir = "shapes/englandLADs/", overwrite = TRUE)
-# unzip("shapes/englsoa.zip", exdir = "shapes/englsoa/", overwrite = TRUE)
+# LADs
+download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
+              destfile = "shapes/lads.zip", method = "curl")
+unzip("shapes/lads.zip", exdir = "shapes/lads", overwrite = TRUE)
+
+# LSOAs
+download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
+              destfile = "shapes/lsoas.zip", method = "curl")
+unzip("shapes/lsoas.zip", exdir = "shapes/lsoas/", overwrite = TRUE)
 
 
 # Map background layers ====
 # Regions
-ereg <- readOGR(dsn = "shapes/ewregions/", "England_gor_2011")
+ereg <- readOGR(dsn = "shapes/regions", "england_gor_2011")
 proj4string(ereg) <- CRS("+init=epsg:27700")
 
 # LADs
-elad <- readOGR(dsn = "shapes/englandLADs/", "England_lad_2011")
+elad <- readOGR(dsn = "shapes/lads/", "england_lad_2011")
 proj4string(elad) <- CRS("+init=epsg:27700")
 row.names(elad) <- as.character(row.names(elad))
 
@@ -64,7 +61,7 @@ rm(regCodes, ereg, elad)
 
 # Fuel poverty layers ====
 # LSOAs
-elsoa <- readOGR(dsn = "shapes/englsoa/", "England_lsoa_2011")
+elsoa <- readOGR(dsn = "shapes/lsoas", "england_lsoa_2011")
 proj4string(elsoa) <- CRS("+init=epsg:27700")
 
 # Eligible rural areas lookup (table 4)
