@@ -10,15 +10,20 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
+require("knitr")
 knitr::opts_chunk$set(
 	echo = TRUE,
 	message = TRUE,
 	warning = TRUE
 )
-require("knitr")
 opts_knit$set(root.dir = normalizePath("../"))
 old_digits <- options()[["digits"]]
 options(digits = 2)
+```
+
+```{r resources}
+require("rgdal")
+require("rgeos")
 ```
 
 'Heat or eat' dilemna blah blah...
@@ -64,29 +69,50 @@ if (!file.exists("data/shapes/lsoas.zip")) {
 
 Finally unzip the files...
 ```{r unzip-shapes}
-unzip("data/shapes/regions.zip", exdir = "data/shapes/regions/")
-unzip("data/shapes/lads.zip",    exdir = "data/shapes/lads/")
-unzip("data/shapes/lsoas.zip",   exdir = "data/shapes/lsoas/")
+if (!file.exists("data/shapes/regions/england_gor_2011.shp")) {
+  unzip("data/shapes/regions.zip", exdir = "data/shapes/regions/")
+}
+
+if (!file.exists("data/shapes/lads/england_lad_2011.shp")) {
+  unzip("data/shapes/lads.zip",    exdir = "data/shapes/lads/")
+}
+
+if (!file.exists("data/shapes/lsoas/england_lsoa_2011.shp")) {
+  unzip("data/shapes/lsoas.zip",   exdir = "data/shapes/lsoas/")
+}
+
 ```
 
-# Map background layers ====
-# Regions
-ereg <- readOGR(dsn = "shapes/regions", "england_gor_2011")
-proj4string(ereg) <- CRS("+init=epsg:27700")
+```{r load-shapefiles}
+regs <- readOGR(dsn = "data/shapes/regions", "england_gor_2011")
+```
 
-# LADs
-elad <- readOGR(dsn = "shapes/lads/", "england_lad_2011")
-proj4string(elad) <- CRS("+init=epsg:27700")
-row.names(elad) <- as.character(row.names(elad))
+```{r}
+lads <- readOGR(dsn = "data/shapes/lads",    "england_lad_2011")
+lsoa <- readOGR(dsn = "data/shapes/lsoas",   "england_lsoa_2011")
+```
 
-# Clip regions
-reg_codes <- as.character(ereg@data$code)
+```{r}
+plot(regs); plot(lads, add = TRUE); plot(lsoa, add = TRUE)
+```
+
+
+```{r}
+## LADs
+proj4string(lads) <- CRS("+init=epsg:27700")
+row.names(lads) <- as.character(row.names(lads))
+
+```
+
+```{r}
+## Clip regions
+reg_codes <- as.character(regs@data$code)
 reg      <- list()
 for(i in 1:length(reg_codes)){
-  tmp <- gIntersection(elad, ereg[ereg@data$code == reg_codes[i], ],
+  tmp <- gIntersection(lads, regs[regs@data$code == reg_codes[i], ],
                        byid = TRUE, drop_lower_td = TRUE)
   row.names(tmp) <- as.character(gsub(paste0(" ", i-1), "", row.names(tmp)))
-  tmp <- SpatialPolygonsDataFrame(tmp, elad@data[row.names(tmp), ])
+  tmp <- SpatialPolygonsDataFrame(tmp, lads@data[row.names(tmp), ])
   reg[[i]] <- tmp
 }
 rm(tmp, i)
@@ -98,7 +124,7 @@ for (i in 1:length(reg)) {
   reg_f[[i]] <- tmp
 }
 rm(tmp, i)
-rm(reg_codes, ereg, elad)
+rm(reg_codes, regs, lads)
 
 
 # Fuel poverty layers ====
@@ -216,50 +242,6 @@ for(i in 1:length(regf)){
 }
 ```
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
-
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
-
-## Vignette Info
-
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r clean-up}
+options(digits = old_digits)
 ```
-
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
