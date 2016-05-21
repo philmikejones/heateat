@@ -9,23 +9,32 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = TRUE,
+	warning = TRUE
+)
+require("knitr")
+opts_knit$set(root.dir = normalizePath("../"))
+old_digits <- options()[["digits"]]
+options(digits = 2)
+```
+
 'Heat or eat' dilemna blah blah...
 
 Download necessary shapefiles from census.ukdataservice.ac.uk
+
 ```{r create-dirs}
-# create dirs for download.file()
-if (!dir.exists("data/")) {
-  dir.create("data/")
-  message("Created data/ dir")
-}
-if (!dir.exists("data/shapes/")) {
-  dir.create("data/shapes/")
-  message("Created data/shapes/ dir")
-}
+setup_dirs("data/")
+setup_dirs("data/shapes/")
+setup_dirs("data/shapes/regions/")
+setup_dirs("data/shapes/lads/")
+setup_dirs("data/shapes/lsoas/")
 ```
 
 ```{r download-shapefiles}
-# English regions
+# Regions
 if (!file.exists("data/shapes/regions.zip")) {
   message("Fetching shapefile(s)...")
   download.file(
@@ -33,22 +42,32 @@ if (!file.exists("data/shapes/regions.zip")) {
     destfile = "data/shapes/regions.zip"
   )
 }
-```
-# # Regions
-# download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011.zip",
-#          destfile = "shapes/regions.zip", method = "curl")
-# unzip("shapes/regions.zip", exdir = "shapes/regions", overwrite = TRUE)
-# 
-# # LADs
-# download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
-#               destfile = "shapes/lads.zip", method = "curl")
-# unzip("shapes/lads.zip", exdir = "shapes/lads", overwrite = TRUE)
-# 
-# # LSOAs
-# download.file("https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
-#               destfile = "shapes/lsoas.zip", method = "curl")
-# unzip("shapes/lsoas.zip", exdir = "shapes/lsoas/", overwrite = TRUE)
 
+# LADs
+if (!file.exists("data/shapes/lads.zip")) {
+  message("Fetching shapefile(s)...")
+  download.file(
+    "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
+    destfile = "data/shapes/lads.zip"
+  )
+}
+
+# LSOAs
+if (!file.exists("data/shapes/lsoas.zip")) {
+  message("Fetching shapefile(s)...")
+  download.file(
+    "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
+    destfile = "data/shapes/lsoas/"
+  )
+}
+```
+
+Finally unzip the files...
+```{r unzip-shapes}
+unzip("data/shapes/regions.zip", exdir = "data/shapes/regions/")
+unzip("data/shapes/lads.zip",    exdir = "data/shapes/lads/")
+unzip("data/shapes/lsoas.zip",   exdir = "data/shapes/lsoas/")
+```
 
 # Map background layers ====
 # Regions
