@@ -1,12 +1,15 @@
 Package: heateat
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-Depends: R (>= 3.3.0)
-License: What license is it under?
+Title: Analysis of 'heat or eat' data in England
+Version: 0.0.1
+Authors@R: person("Phil Mike", "Jones", email = "philmikejones@gmail.com", role = c("aut", "cre"))
+Description: Analysis of 'heat or eat' poverty data in England.
+Depends:
+    R (>= 3.3.0)
+License: GPL v3
 Encoding: UTF-8
 LazyData: true
-Suggests: knitr,
+Suggests:
+    knitr,
     rmarkdown
 VignetteBuilder: knitr
+RoxygenNote: 5.0.1
