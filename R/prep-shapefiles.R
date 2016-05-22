@@ -53,21 +53,39 @@ if (!file.exists("data/shapes/lsoas/england_lsoa_2011.shp")) {
 }
 
 
-# Load the shapefiles
+# Separate regions
 regs <- readOGR(dsn = "data/shapes/regions", "england_gor_2011")
-lads <- readOGR(dsn = "data/shapes/lads",    "england_lad_2011")
-lsoa <- readOGR(dsn = "data/shapes/lsoas",   "england_lsoa_2011")
-
-# Set CRS
 proj4string(regs) <- CRS("+init=epsg:27700")
+
+# Filter each region
+regions <- list(
+  easte = regs[regs@data$name == "East of England", ],
+  lond  = regs[regs@data$name == "London", ],
+  nortw = regs[regs@data$name == "North West", ],
+  norte = regs[regs@data$name == "North East", ],
+  eastm = regs[regs@data$name == "East Midlands", ],
+  yorks = regs[regs@data$name == "Yorkshire and The Humber", ],
+  soutw = regs[regs@data$name == "South West", ],
+  westm = regs[regs@data$name == "West Midlands", ],
+  soute = regs[regs@data$name == "South East", ]
+)
+
+# Clip LADs
+lads <- readOGR(dsn = "data/shapes/lads", "england_lad_2011")
 proj4string(lads) <- CRS("+init=epsg:27700")
+
+cores <- parallel::detectCores()
+region_lads <- parallel::mclapply(regions, gIntersection,
+                                  spgeom2 = lads, byid = TRUE)
+
+
+stop()
+lsoa <- readOGR(dsn = "data/shapes/lsoas", "england_lsoa_2011")
 proj4string(lsoa) <- CRS("+init=epsg:27700")
+regions_lsoa <- lapply(regions, gIntersection, spgeom2 = lsoa, byid = TRUE)
 
 
-# # Separate regions and clip
-# ## Clip regions
-# reg_codes <- as.character(regs@data$code)
-# reg      <- list()
+
 # for(i in 1:length(reg_codes)){
 #   tmp <- gIntersection(lads, regs[regs@data$code == reg_codes[i], ],
 #                        byid = TRUE, drop_lower_td = TRUE)
