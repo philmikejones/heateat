@@ -2,6 +2,9 @@
 require("rgdal")
 require("rgeos")
 
+# Set up cores
+cores <- parallel::detectCores()
+
 
 # Set up the directories necessary for download.file()
 setup_dir("data/")
@@ -70,13 +73,26 @@ regions <- list(
   soute = regs[regs@data$name == "South East", ]
 )
 
+
 # Clip LADs
 lads <- readOGR(dsn = "data/shapes/lads", "england_lad_2011")
 proj4string(lads) <- CRS("+init=epsg:27700")
 
-cores <- parallel::detectCores()
-region_lads <- parallel::mclapply(regions, gIntersection,
-                                  spgeom2 = lads, byid = TRUE)
+# Subset first; it's more resource-efficient than gIntersections()
+regions_lads <- list(
+  easte_lads = lads[regions[["easte"]], ],
+  lond_lads  = lads[regions[["lond"]], ],
+  nortw_lads = lads[regions[["nortw"]], ],
+  norte_lads = lads[regions[["norte"]], ],
+  eastm_lads = lads[regions[["eastm"]], ],
+  yorks_lads = lads[regions[["yorks"]], ],
+  soutw_lads = lads[regions[["soutw"]], ],
+  westm_lads = lads[regions[["westm"]], ],
+  soute_lads = lads[regions[["soute"]], ]
+)
+regions_lads <- parallel::mclapply(regions, gIntersection,
+                                   spgeom2 = lads, byid = TRUE)
+plot(regions_lads$yorks)
 
 
 stop()
