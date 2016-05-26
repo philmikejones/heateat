@@ -51,23 +51,19 @@ if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
 }
 
 
-# Separate regions
-regs <- rgdal::readOGR(dsn = "data/shapes/regions", "england_gor_2011_gen")
+# Load regions
+regions <- rgdal::readOGR(dsn = "data/shapes/regions", "england_gor_2011_gen")
 
 # Filter each region
-reg_east_e <- regs[regs@data$name == "East of England", ]
-reg_london <- regs[regs@data$name == "London", ]
-reg_n_west <- regs[regs@data$name == "North West", ]
-reg_n_east <- regs[regs@data$name == "North East", ]
-reg_east_m <- regs[regs@data$name == "East Midlands", ]
-reg_york_h <- regs[regs@data$name == "Yorkshire and The Humber", ]
-reg_s_west <- regs[regs@data$name == "South West", ]
-reg_west_m <- regs[regs@data$name == "West Midlands", ]
-reg_s_east <- regs[regs@data$name == "South East", ]
+regions_list <- list()
+for (i in 1:nrow(regions@data)) {
+  regions_list[[i]] <- regions[i, ]
+}
 
 
 # Clip LADs
 lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011_gen")
+lads_list <- list()
 
 # Subset first; it's more resource-efficient than gIntersection()
 lad_east_e <- lads[reg_east_e, ]
