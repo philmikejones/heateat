@@ -55,36 +55,46 @@ if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
 regs <- rgdal::readOGR(dsn = "data/shapes/regions", "england_gor_2011_gen")
 
 # Filter each region
-regions <- list(
-  easte = regs[regs@data$name == "East of England", ],
-  lond  = regs[regs@data$name == "London", ],
-  nortw = regs[regs@data$name == "North West", ],
-  norte = regs[regs@data$name == "North East", ],
-  eastm = regs[regs@data$name == "East Midlands", ],
-  yorks = regs[regs@data$name == "Yorkshire and The Humber", ],
-  soutw = regs[regs@data$name == "South West", ],
-  westm = regs[regs@data$name == "West Midlands", ],
-  soute = regs[regs@data$name == "South East", ]
-)
+reg_east_e <- regs[regs@data$name == "East of England", ]
+reg_london <- regs[regs@data$name == "London", ]
+reg_n_west <- regs[regs@data$name == "North West", ]
+reg_n_east <- regs[regs@data$name == "North East", ]
+reg_east_m <- regs[regs@data$name == "East Midlands", ]
+reg_york_h <- regs[regs@data$name == "Yorkshire and The Humber", ]
+reg_s_west <- regs[regs@data$name == "South West", ]
+reg_west_m <- regs[regs@data$name == "West Midlands", ]
+reg_s_east <- regs[regs@data$name == "South East", ]
 
 
 # Clip LADs
 lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011_gen")
 
 # Subset first; it's more resource-efficient than gIntersection()
-regions_lads <- list(
-  easte_lads = lads[regions[["easte"]], ],
-  lond_lads  = lads[regions[["lond"]], ],
-  nortw_lads = lads[regions[["nortw"]], ],
-  norte_lads = lads[regions[["norte"]], ],
-  eastm_lads = lads[regions[["eastm"]], ],
-  yorks_lads = lads[regions[["yorks"]], ],
-  soutw_lads = lads[regions[["soutw"]], ],
-  westm_lads = lads[regions[["westm"]], ],
-  soute_lads = lads[regions[["soute"]], ]
+lad_east_e <- lads[reg_east_e, ]
+lad_london <- lads[reg_london, ]
+lad_n_west <- lads[reg_n_west, ]
+lad_n_east <- lads[reg_n_east, ]
+lad_east_m <- lads[reg_east_m, ]
+lad_york_h <- lads[reg_york_h, ]
+lad_s_west <- lads[reg_s_west, ]
+lad_west_m <- lads[reg_west_m, ]
+lad_s_east <- lads[reg_s_east, ]
+
+lad_east_e <- rgeos::gIntersection(lad_east_e, reg_east_e, byid = TRUE)
+lad_london <- rgeos::gIntersection(lad_london, reg_london, byid = TRUE)
+lad_n_west <- rgeos::gIntersection(lad_n_west, reg_n_west, byid = TRUE)
+lad_n_east <- rgeos::gIntersection(lad_n_east, reg_n_east, byid = TRUE)
+lad_east_m <- rgeos::gIntersection(lad_east_m, reg_east_m, byid = TRUE)
+lad_york_h <- rgeos::gIntersection(lad_york_h, reg_york_h, byid = TRUE)
+lad_s_west <- rgeos::gIntersection(lad_s_west, reg_s_west, byid = TRUE)
+lad_west_m <- rgeos::gIntersection(lad_west_m, reg_west_m, byid = TRUE)
+lad_s_east <- rgeos::gIntersection(lad_s_east, reg_s_east, byid = TRUE)
+
+
+
+regions_lads <- parallel::mclapply(regions_lads, function(x)
+  rgeos::gIntersection(x, spgeom2 = regs, byid = TRUE)
 )
-regions_lads <- parallel::mclapply(regions_lads, rgeos::gIntersection,
-                                   spgeom2 = regs, byid = TRUE)
 
 
 # LSOAs
@@ -103,8 +113,11 @@ regions_lsoa <- list(
   westm_lsoa = lsoa[regions[["westm"]], ],
   soute_lsoa = lsoa[regions[["soute"]], ]
 )
-regions_lsoa <- parallel::mclapply(regions, gIntersection,
-                                   spgeom2 = regions_lsoa, byid = TRUE)
+regions_lsoa <- parallel::mclapply(regions_lsoa, function(x)
+  rgeos::gIntersection(x, spgeom2 = regs, byid = TRUE)
+)
+
+
 
 # Load fuel poverty data
 setup_dir("data/raw/")
