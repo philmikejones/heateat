@@ -13,3 +13,7 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
+Imports: maptools,
+    ggplot2,
+    rgdal,
+    rgeos

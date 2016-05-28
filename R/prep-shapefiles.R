@@ -1,5 +1,5 @@
-# Set up cores
-cores <- parallel::detectCores()
+# Require maptools for fortify()
+require("maptools")
 
 # Set up the directories necessary for download.file()
 setup_dir("data/")
@@ -13,8 +13,8 @@ setup_dir("data/shapes/lsoas/")
 if (!file.exists("data/shapes/regions.zip")) {
   message("Fetching shapefile(s)...")
   download.file(
-    "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011_gen.zip",
-    destfile = "data/shapes/regions.zip"
+    url = "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011_gen.zip",
+    destfile = "data/shapes/regions.zip", mode = "wb", method = "wget"
   )
 }
 
@@ -23,7 +23,7 @@ if (!file.exists("data/shapes/lads.zip")) {
   message("Fetching shapefile(s)...")
   download.file(
     "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011_gen.zip",
-    method = "wget", destfile = "data/shapes/lads.zip"
+    mode = "wb", method = "wget", destfile = "data/shapes/lads.zip"
   )
 }
 
@@ -32,7 +32,7 @@ if (!file.exists("data/shapes/lsoas.zip")) {
   message("Fetching shapefile(s)...")
   download.file(
     "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011_gen.zip",
-    destfile = "data/shapes/lsoas.zip"
+    destfile = "data/shapes/lsoas.zip", method = "wget", mode = "wb"
   )
 }
 
@@ -50,17 +50,17 @@ if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
 }
 
 
-# # Load regions
-# regions <- rgdal::readOGR(dsn = "data/shapes/regions", "england_gor_2011_gen")
-#
-# # Separate each region
-# regions_codes <- as.list(as.character(unique(regions@data$name)))
-#
-# regions_list <- list()
-# for (i in seq_along(regions_codes)) {
-#   regions_list[[i]] <- regions[regions@data$name == regions_codes[[i]], ]
-# }
-# rm(i)
+# Load regions
+regions   <- rgdal::readOGR(dsn = "data/shapes/regions", "england_gor_2011_gen")
+
+# Separate each region
+regions_codes <- as.list(as.character(unique(regions@data$name)))
+
+regions_list <- list()
+for (i in seq_along(regions_codes)) {
+  regions_list[[i]] <- regions[regions@data$name == regions_codes[[i]], ]
+}
+rm(i)
 #
 #
 # # Load LADs
