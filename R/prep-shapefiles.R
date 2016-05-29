@@ -47,53 +47,57 @@ if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
 }
 
 
-# Load regions
-regs   <- rgdal::readOGR(dsn = "data/shapes/regs", "england_gor_2011_gen")
-regs@data$label <- as.character(regs@data$label)
-
-# Load LADs
-lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011_gen")
-lads@data$label <- as.character(lads@data$label)
-
-# LSOAs
-lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoa", "england_lsoa_2011_gen")
-lsoa@data$code <- as.character(lsoa@data$code)
-
-
-# Load fuel poverty data
-dir.create("data/raw/", recursive = TRUE, showWarnings = FALSE)
-if (!file.exists("data/raw/fuel-poverty.xlsx")) {
-  message("Obtaining fuel poverty data...")
-  download.file("https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/485161/2013_Sub-regional_tables.xlsx",
-                destfile = "data/raw/fuel-poverty.xlsx")
-}
-
-fp <- readxl::read_excel("data/raw/fuel-poverty.xlsx",
-                         sheet = "Table 3", skip = 1, col_names = TRUE)
-fp <- dplyr::select(fp, 1, 6, 7, 8)
-fp <- na.omit(fp)
-colnames(fp) <- c("code", "num_hh", "num_fph", "per_fph")
-
-if (!(nrow(fp) == nrow(lsoa@data))) {
-  warning("LSOA row numbers do not match")
-  stop()
-}
-
-# Join to shapefile
-lsoa@data <- dplyr::inner_join(lsoa@data, fp, by = "code")
+# # Load regions
+# regs   <- rgdal::readOGR(dsn = "data/shapes/regs", "england_gor_2011_gen")
+# regs@data$label <- as.character(regs@data$label)
+#
+# # Load LADs
+# lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011_gen")
+# lads@data$label <- as.character(lads@data$label)
+#
+# # LSOAs
+# lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoa", "england_lsoa_2011_gen")
+# lsoa@data$code <- as.character(lsoa@data$code)
 
 
-# Plot
-# Fortify shapefiles
-regs_f <- ggplot2::fortify(regs, region = "label")
-regs_f <- dplyr::inner_join(regs_f, regs@data, by = c("id" = "label"))
+# # Load fuel poverty data
+# dir.create("data/raw/", recursive = TRUE, showWarnings = FALSE)
+# if (!file.exists("data/raw/fuel-poverty.xlsx")) {
+#   message("Obtaining fuel poverty data...")
+#   download.file("https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/485161/2013_Sub-regional_tables.xlsx",
+#                 destfile = "data/raw/fuel-poverty.xlsx")
+# }
+#
+# fp <- readxl::read_excel("data/raw/fuel-poverty.xlsx",
+#                          sheet = "Table 3", skip = 1, col_names = TRUE)
+# fp <- dplyr::select(fp, 1, 6, 7, 8)
+# fp <- na.omit(fp)
+# colnames(fp) <- c("code", "num_hh", "num_fph", "per_fph")
+#
+# if (!(nrow(fp) == nrow(lsoa@data))) {
+#   warning("LSOA row numbers do not match")
+#   stop()
+# }
 
-lads_f <- ggplot2::fortify(lads, region = "label")
-lads_f <- dplyr::inner_join(lads_f, lads@data, by = c("id" = "label"))
 
+# # Join to shapefile
+# lsoa@data <- dplyr::inner_join(lsoa@data, fp, by = "code")
+
+# # Fortify shapefiles
+# regs_f <- ggplot2::fortify(regs, region = "label")
+# regs_f <- dplyr::inner_join(regs_f, regs@data, by = c("id" = "label"))
+# save(regs_f, file = "data/regions.RData")
+# rm(regs, regs_f)
+#
+# lads_f <- ggplot2::fortify(lads, region = "label")
+# lads_f <- dplyr::inner_join(lads_f, lads@data, by = c("id" = "label"))
+# save(lads_f, file = "data/lads.RData")
+# rm(lads, lads_f)
+#
 # lsoa_f <- ggplot2::fortify(lsoa, region = "code")
 # lsoa_f <- dplyr::inner_join(lsoa_f, lsoa@data, by = c("id" = "code"))
-
+# save(lsoa_f, file = "data/lsoa.RData")
+# rm(lsoa, lsoa_f)
 
 
 
