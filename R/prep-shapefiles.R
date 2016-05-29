@@ -1,5 +1,4 @@
-# Require maptools for fortify()
-require("maptools")
+# Depends on maptools and rgeos being loaded into namespace for fortify()
 
 # Set up the directories necessary for download.file()
 dir.create("data/shapes/regs/", recursive = TRUE, showWarnings = FALSE)
@@ -50,16 +49,19 @@ if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
 
 # Load regions
 regs   <- rgdal::readOGR(dsn = "data/shapes/regs", "england_gor_2011_gen")
+regs@data$label <- as.character(regs@data$label)
 
 # Load LADs
 lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011_gen")
+lads@data$label <- as.character(lads@data$label)
 
 # LSOAs
 lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoa", "england_lsoa_2011_gen")
+lsoa@data$code <- as.character(lsoa@data$code)
 
 
 # Load fuel poverty data
-dir.create("data/raw/")
+dir.create("data/raw/", recursive = TRUE, showWarnings = FALSE)
 if (!file.exists("data/raw/fuel-poverty.xlsx")) {
   message("Obtaining fuel poverty data...")
   download.file("https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/485161/2013_Sub-regional_tables.xlsx",
@@ -78,11 +80,19 @@ if (!(nrow(fp) == nrow(lsoa@data))) {
 }
 
 # Join to shapefile
-lsoa@data$code <- as.character(lsoa@data$code)
 lsoa@data <- dplyr::inner_join(lsoa@data, fp, by = "code")
 
 
+# Plot
+# Fortify shapefiles
+regs_f <- ggplot2::fortify(regs, region = "label")
+regs_f <- dplyr::inner_join(regs_f, regs@data, by = c("id" = "label"))
 
+lads_f <- ggplot2::fortify(lads, region = "label")
+lads_f <- dplyr::inner_join(lads_f, lads@data, by = c("id" = "label"))
+
+# lsoa_f <- ggplot2::fortify(lsoa, region = "code")
+# lsoa_f <- dplyr::inner_join(lsoa_f, lsoa@data, by = c("id" = "code"))
 
 
 
