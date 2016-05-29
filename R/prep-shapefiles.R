@@ -2,11 +2,9 @@
 require("maptools")
 
 # Set up the directories necessary for download.file()
-setup_dir("data/")
-setup_dir("data/shapes/")
-setup_dir("data/shapes/regions/")
-setup_dir("data/shapes/lads/")
-setup_dir("data/shapes/lsoas/")
+dir.create("data/shapes/regs/", recursive = TRUE, showWarnings = FALSE)
+dir.create("data/shapes/lads/", recursive = TRUE, showWarnings = FALSE)
+dir.create("data/shapes/lsoa/", recursive = TRUE, showWarnings = FALSE)
 
 # Download necessary shapefiles from census.ukdataservice.ac.uk
 # Regions
@@ -37,8 +35,8 @@ if (!file.exists("data/shapes/lsoas.zip")) {
 }
 
 # Finally unzip the files...
-if (!file.exists("data/shapes/regions/england_gor_2011_gen.shp")) {
-  unzip("data/shapes/regions.zip", exdir = "data/shapes/regions/")
+if (!file.exists("data/shapes/regs/england_gor_2011_gen.shp")) {
+  unzip("data/shapes/regions.zip", exdir = "data/shapes/regs/")
 }
 
 if (!file.exists("data/shapes/lads/england_lad_2011_gen.shp")) {
@@ -46,122 +44,51 @@ if (!file.exists("data/shapes/lads/england_lad_2011_gen.shp")) {
 }
 
 if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
-  unzip("data/shapes/lsoas.zip",   exdir = "data/shapes/lsoas/")
+  unzip("data/shapes/lsoas.zip",   exdir = "data/shapes/lsoa/")
 }
 
 
 # Load regions
-regions   <- rgdal::readOGR(dsn = "data/shapes/regions", "england_gor_2011_gen")
+regs   <- rgdal::readOGR(dsn = "data/shapes/regs", "england_gor_2011_gen")
 
-# Separate each region
-regions_codes <- as.list(as.character(unique(regions@data$name)))
+# Load LADs
+lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011_gen")
 
-regions_list <- list()
-for (i in seq_along(regions_codes)) {
-  regions_list[[i]] <- regions[regions@data$name == regions_codes[[i]], ]
+# LSOAs
+lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoa", "england_lsoa_2011_gen")
+
+
+# Load fuel poverty data
+dir.create("data/raw/")
+if (!file.exists("data/raw/fuel-poverty.xlsx")) {
+  message("Obtaining fuel poverty data...")
+  download.file("https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/485161/2013_Sub-regional_tables.xlsx",
+                destfile = "data/raw/fuel-poverty.xlsx")
 }
-rm(i)
-#
-#
-# # Load LADs
-# lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011_gen")
-#
-# # Clip LADs to each region
-# lads_list <- list()
-# for (i in seq_along(1:length(regions_codes))) {
-#   lads_list[[i]] <- lads[regions_list[[i]], ]
-# }
-#
-#
-# # LSOAs
-# lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoas", "england_lsoa_2011_gen")
-#
-# # Split LSOAs into regions
-# # Subset first because it's efficient
-# regions_lsoa <- list(
-#   easte_lsoa = lsoa[regions[["easte"]], ],
-#   lond_lsoa  = lsoa[regions[["lond"]], ],
-#   nortw_lsoa = lsoa[regions[["nortw"]], ],
-#   norte_lsoa = lsoa[regions[["norte"]], ],
-#   eastm_lsoa = lsoa[regions[["eastm"]], ],
-#   yorks_lsoa = lsoa[regions[["yorks"]], ],
-#   soutw_lsoa = lsoa[regions[["soutw"]], ],
-#   westm_lsoa = lsoa[regions[["westm"]], ],
-#   soute_lsoa = lsoa[regions[["soute"]], ]
-# )
-# regions_lsoa <- parallel::mclapply(regions_lsoa, function(x)
-#   rgeos::gIntersection(x, spgeom2 = regs, byid = TRUE)
-# )
-#
-#
-#
-# # Load fuel poverty data
-# setup_dir("data/raw/")
-# if (!file.exists("data/raw/fuel-poverty.xlsx")) {
-#   message("Obtaining fuel poverty data...")
-#   download.file("https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/485161/2013_Sub-regional_tables.xlsx",
-#                 destfile = "data/raw/fuel-poverty.xlsx")
-# }
-# fp <- readxl::read_excel("data/raw/fuel-poverty.xlsx",
-#                          sheet = "Table 3", skip = 1, col_names = TRUE)
-# fp <- dplyr::select(fp, 1, 6, 7, 8)
-# colnames(fp) <- c("code", "num_hh", "num_fph", "per_fph")
-# fp <- na.omit(fp)
-#
-# # Join to shapefile
-# lsoa@data$code <- as.character(lsoa@data$code)
-# lsoa@data <- dplyr::inner_join(lsoa@data, fp, by = "code")
-#
-#
-# proj4string(regs) <- CRS("+init=epsg:27700")
-# proj4string(lads) <- CRS("+init=epsg:27700")
-# proj4string(lsoa) <- CRS("+init=epsg:27700")
-#
-# regions_lsoa <- lapply(regions, gIntersection, spgeom2 = lsoa, byid = TRUE)
-#
-#
-#
-# # reg_f <- list()
-# # for (i in 1:length(reg)) {
-# #   tmp <- fortify(reg[[i]], region = "code")
-# #   tmp <- merge(tmp, reg[[i]], by.x = "id", by.y = "code")
-# #   reg_f[[i]] <- tmp
-# # }
-# # rm(tmp, i)
-# # rm(reg_codes, regs, lads)
-# #
-# # # Obtain eligible rural area data
-# # # Eligible rural areas lookup (table 4)
-# # eral <- read.csv("data/csco-eligible-rural-area-lsoa.csv",
-# #                  skip = 7, header = TRUE)
-# # eral <- eral[, c(4:5)]
-# # names(eral) <- c("name", "code")
-# #
-# # elsoa$CODE <- as.character(elsoa$CODE)
-# # eral$code  <- as.character(eral$code)
-# # era        <- elsoa[elsoa$CODE %in% eral$code == TRUE, ]
-# # rm(eral)
-# #
-# # # Most deprived quartile rural areas lookup (table 5)
-# # dral <- read.csv("data/eligible-deprived-rural-areas-25.csv",
-# #                  skip = 7, header = TRUE)
-# # dral <- dral[, 4:5]
-# # names(dral) <- c("name", "code")
-# #
-# # dral$code  <- as.character(dral$code)
-# # dra        <- elsoa[elsoa$CODE %in% dral$code == TRUE, ]
-# # rm(dral)
-# #
-# # # Eligible areas of low income lookup (table 1)
-# # alil <- read.csv("data/eligible-areas-low-income-eng.csv",
-# #                  skip = 7, header = TRUE)
-# # alil <- alil[, 4:5]
-# # names(alil) <- c("name", "code")
-# #
-# # alil$code <- as.character(alil$code)
-# # ali       <- elsoa[elsoa$CODE %in% alil$code == TRUE, ]
-# # rm(alil)
-# # rm(elsoa)
+
+fp <- readxl::read_excel("data/raw/fuel-poverty.xlsx",
+                         sheet = "Table 3", skip = 1, col_names = TRUE)
+fp <- dplyr::select(fp, 1, 6, 7, 8)
+fp <- na.omit(fp)
+colnames(fp) <- c("code", "num_hh", "num_fph", "per_fph")
+
+if (!(nrow(fp) == nrow(lsoa@data))) {
+  warning("LSOA row numbers do not match")
+  stop()
+}
+
+# Join to shapefile
+lsoa@data$code <- as.character(lsoa@data$code)
+lsoa@data <- dplyr::inner_join(lsoa@data, fp, by = "code")
+
+
+
+
+
+
+
+
+
 # #
 # # # Food bank layer ====
 # # fbt <- read.csv("data/foodbanks.csv")
