@@ -25,70 +25,16 @@ options(digits = 2)
 require("heateat")
 ```
 
-# Fuel poverty layers ====
+# Fuel poverty layers
 ```{r}
-# # Final maps ====
-# Themes
-map <- theme(line = element_blank(), 
-             text = element_blank(), 
-             title = element_blank(),
-             panel.background = element_rect(fill = "transparent"),
-             legend.position = "none")
-mapl <- theme(line = element_blank(),
-              axis.text = element_blank(),
-              axis.title = element_blank(),
-              panel.background = element_rect(fill = "transparent"))
-
-# Paper sizes
-port <- c(29.7/2.54, 42/2.54)
-land <- c(42/2.54, 29.7/2.54)
-
-for(i in 1:length(regf)){
-  erac <- era[reg[[i]], ]
-  eraf <- fortify(erac, region = "CODE")
-  eraf <- merge(eraf, erac, by.x = "id", by.y = "CODE")
-  
-  alic <- ali[reg[[i]], ]
-  alif <- fortify(alic, region = "CODE")
-  alif <- merge(alif, alic, by.x = "id", by.y = "CODE")
-  
-  drac <- dra[reg[[i]], ]
-  draf <- fortify(drac, region = "CODE")
-  draf <- merge(draf, drac, by.x = "id", by.y = "CODE")
-  
-  fbc <- fb[reg[[i]], ]
-  fbc@data <- merge(fbc@data, fbc, by = "match")
-  
-  ggplot() +
-    geom_polygon(data = eraf, aes(long, lat, group = group,
-                                  fill = "CSCO eligible rural area"), 
-                 colour = "dark grey") +
-    geom_polygon(data = draf, aes(long, lat, group = group,
-                                  fill = "Deprived rural area"),
-                 colour = "light grey") +
-    geom_polygon(data = alif, aes(long, lat, group = group, 
-                                  fill = "Eligible low-income area")
-                 , colour = "light grey") +
-    geom_polygon(data = regf[[i]], aes(long, lat, group = group),
-                 fill = "transparent", colour = "black") +
-    geom_point(data = fbc@data, aes(OSEAST1M10nov, OSNRTH1M10nov, group = match,
-                               colour = Total.x, size = 4)) +
-    scale_size(guide = FALSE) +  # remove size legend
-    scale_fill_manual(values = c("CSCO eligible rural area" = "#c7e9c0",
-                                 "Deprived rural area"      = "#238b45",
-                                 "Eligible low-income area" = "#6baed6")) +
-    guides(fill = guide_legend(title = NULL)) +  # remove fill legends title
-    scale_colour_gradient(low = "#fdae6b", high = "#a63603", na.value = "grey",
-                        name = "Total Clients") +
-    annotation_raster(ccn, ymin = (min(regf[[i]]$long)),
-                           ymax = (max(regf[[i]]$long)),
-                           xmin = (min(regf[[i]]$lat)),
-                           xmax = (min(regf[[i]]$lat))) +
-    mapl + coord_equal()
-  
-  ggsave(filename = paste0("region", i, ".pdf"), path = "maps/",
-                           width = land[1], height = land[2])
-}
+load("data/regions.RData")
+load("data/lads.RData")
+load("data/lsoa.RData")
+ggplot2::ggplot() +
+  ggplot2::geom_polygon(data = regs_f, ggplot2::aes(long, lat, group = group)) +
+  ggplot2::geom_polygon(data = lads_f, ggplot2::aes(long, lat, group = group)) +
+  ggplot2::geom_polygon(data = lsoa_f, ggplot2::aes(long, lat, group = group)) +
+  ggplot2::coord_equal()
 ```
 
 ```{r clean-up}

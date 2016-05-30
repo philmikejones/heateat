@@ -98,20 +98,3 @@ if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
 # lsoa_f <- dplyr::inner_join(lsoa_f, lsoa@data, by = c("id" = "code"))
 # save(lsoa_f, file = "data/lsoa.RData")
 # rm(lsoa, lsoa_f)
-
-
-
-
-
-# #
-# # # Food bank layer ====
-# # fbt <- read.csv("data/foodbanks.csv")
-# # fbm <- read.csv("data/foodbanks-matched.csv")
-# # fb <- merge(fbt, fbm, by = "match")
-# # rm(fbt, fbm)
-# # fb <- fb[fb$URINDEW10nov != 9, ] # 9 is Scotland/NI/Channel Is/IoM, see docs
-# # fb$Total[fb$Total == -99] <- NA
-# # # create projection for clipping
-# # coordinates(fb) <- c("OSEAST1M10nov", "OSNRTH1M10nov")
-# # proj4string(fb) <- CRS("+init=epsg:27700")
-# # fb <- spTransform(fb, CRSobj = CRS(proj4string(reg[[1]])))

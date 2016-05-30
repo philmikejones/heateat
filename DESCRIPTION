@@ -18,6 +18,4 @@ RoxygenNote: 5.0.1
 Imports: ggplot2,
     rgdal,
     dplyr,
-    readxl,
-    rgeos,
-    maptools
+    readxl
