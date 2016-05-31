@@ -1,21 +1,11 @@
 # DEPENDS on maptools and rgeos being loaded into namespace for fortify()
 
 # Set up the directories necessary for download.file()
-dir.create("data/shapes/regs/", recursive = TRUE, showWarnings = FALSE)
 dir.create("data/shapes/lads/", recursive = TRUE, showWarnings = FALSE)
 dir.create("data/shapes/lsoa/", recursive = TRUE, showWarnings = FALSE)
 dir.create("data/raw/",         recursive = TRUE, showWarnings = FALSE)
 
 # Download necessary shapefiles from census.ukdataservice.ac.uk
-# Regions
-if (!file.exists("data/shapes/regions.zip")) {
-  message("Fetching shapefile(s)...")
-  download.file(
-    url = "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_gor_2011_gen.zip",
-    destfile = "data/shapes/regions.zip", mode = "wb", method = "wget"
-  )
-}
-
 # LADs
 if (!file.exists("data/shapes/lads.zip")) {
   message("Fetching shapefile(s)...")
@@ -35,10 +25,6 @@ if (!file.exists("data/shapes/lsoas.zip")) {
 }
 
 # Finally unzip the files...
-if (!file.exists("data/shapes/regs/england_gor_2011_gen.shp")) {
-  unzip("data/shapes/regions.zip", exdir = "data/shapes/regs/")
-}
-
 if (!file.exists("data/shapes/lads/england_lad_2011_gen.shp")) {
   unzip("data/shapes/lads.zip",    exdir = "data/shapes/lads/")
 }
@@ -48,21 +34,9 @@ if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
 }
 
 
-# Load Yorkshire and The Humber
-regs   <- rgdal::readOGR(dsn = "data/shapes/regs", "england_gor_2011_gen")
-regs@data$label <- as.character(regs@data$label)
-regs <- regs[regs@data$name == "Yorkshire and The Humber", ]
-
 # Load LADs
 lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011_gen")
 lads@data$label <- as.character(lads@data$label)
-
-download.file("https://geoportal.statistics.gov.uk/Docs/Lookups/Local_authority_districts_(2011)_to_counties_(2011)_Eng_lookup.zip",
-              destfile = "data/raw/lad-county-lookup.zip")
-unzip("data/raw/lad-county-lookup.zip", files = "LAD11_CTY11_EN_LU.csv",
-      exdir = "data/")
-lad_cty_lu <- readr::read_csv("data/LAD11_CTY11_EN_LU.csv")
-
 
 # LSOAs
 lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoa", "england_lsoa_2011_gen")
