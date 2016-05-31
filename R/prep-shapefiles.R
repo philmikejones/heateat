@@ -61,6 +61,14 @@ row.names(lsoa) <- gsub("320 ", "", row.names(lsoa))
 
 lsoa <- sp::SpatialPolygonsDataFrame(lsoa,
   lsoa_data[row.names(lsoa_data) %in% row.names(lsoa), ])
+lsoa@data$name <- as.character(lsoa@data$name)
+
+conds <- all(grepl("Barnsley", lsoa@data$name) | grepl("Doncaster", lsoa@data$name) |
+  grepl("Rotherham", lsoa@data$name) | grepl("Sheffield", lsoa@data$name))
+if (!conds) {
+  warning("LSOA not joined correctly (LSOA not in South Yorkshire present)")
+  stop()
+}
 
 
 # Load fuel poverty data
