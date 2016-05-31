@@ -49,6 +49,10 @@ lads <- lads[lads@data$name == "Barnsley"  |
 # LSOAs
 lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoa", "england_lsoa_2011_gen")
 lsoa@data$code <- as.character(lsoa@data$code)
+lsoa_data <- lsoa@data
+lsoa <- rgeos::gIntersection(lads, lsoa, byid = TRUE, drop_lower_td = TRUE)
+stop()
+sp::spChFIDs()
 
 # Load fuel poverty data
 if (!file.exists("data/raw/fuel-poverty.xlsx")) {
