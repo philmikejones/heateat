@@ -16,3 +16,4 @@
 *.qgs
 .Rhistory
 inst/doc
+packrat/lib*/
