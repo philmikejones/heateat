@@ -3,6 +3,7 @@
 /maps
 /shapes
 /documentation
+vignettes/*_cache
 .gitignore~
 .readme.md~
 .Rproj.user
