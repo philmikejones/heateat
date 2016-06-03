@@ -1,0 +1,44 @@
+---
+title: "Heat or Eat"
+author: "Phil Mike Jones"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+require("knitr")
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = TRUE
+)
+opts_knit$set(root.dir = normalizePath("../"))
+old_digits <- options()[["digits"]]
+options(digits = 2)
+```
+
+```{r resources}
+require("heateat")
+devtools::source_gist("d1f0aa148ac9fd1cf4b3")
+```
+
+# Fuel poverty layers
+```{r plot-lsoas, fig.width=7, fig.height=7}
+load("data/lads.RData")
+load("data/lsoa.RData")
+ggplot2::ggplot() +
+  ggplot2::geom_polygon(data = lsoa_f, ggplot2::aes(long, lat, group = group,
+                                                    fill = per_fph),
+                        colour = NA) +
+  ggplot2::geom_polygon(data = lads_f, ggplot2::aes(long, lat, group = group),
+                        fill = "transparent", colour = "black") +
+  ggplot2::coord_equal() + mapl
+```
+
+```{r clean-up}
+options(digits = old_digits)
+```
