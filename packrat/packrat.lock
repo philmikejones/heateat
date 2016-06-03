@@ -43,6 +43,11 @@ Source: CRAN
 Version: 1.0-6
 Hash: 67d0775189fd0041d95abca618c5c07e
 
+Package: brew
+Source: CRAN
+Version: 1.0-6
+Hash: 931f9972deae0f205e1c78a51f33149b
+
 Package: caTools
 Source: CRAN
 Version: 1.17.1
@@ -197,6 +202,12 @@ GithubRepo: rmarkdown
 GithubUsername: rstudio
 GithubRef: master
 GithubSha1: e95b20a8c39ab3669b9bd21cc5995c2c15bb993a
+
+Package: roxygen2
+Source: CRAN
+Version: 5.0.1
+Hash: 5cf42c9a288a1cc760166097f8e42a92
+Requires: Rcpp, brew, digest, stringi, stringr
 
 Package: scales
 Source: CRAN
