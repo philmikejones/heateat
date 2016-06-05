@@ -15,13 +15,8 @@ if (!file.exists("data-raw/lsoas.zip")) {
 
 
 # Unzip
-if (!file.exists("data/shapes/lads/england_lad_2011_gen.shp")) {
-  unzip("data-raw/lads.zip", exdir = "data-raw/lads/")
-}
-
-if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
-  unzip("data-raw/lsoas.zip",   exdir = "data-raw/lsoa/")
-}
+unzip("data-raw/lads.zip", exdir = "data-raw/lads/")
+unzip("data-raw/lsoas.zip",   exdir = "data-raw/lsoa/")
 
 
 # Load shapefiles
