@@ -1,33 +1,30 @@
 # Download necessary shapefiles from census.ukdataservice.ac.uk
-# LADs
-if (!file.exists("data/shapes/lads.zip")) {
-  message("Fetching shapefile(s)...")
+if (!file.exists("data-raw/lads.zip")) {
   download.file(
     "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
-    mode = "wb", method = "wget", destfile = "data/shapes/lads.zip"
+    mode = "wb", method = "wget", destfile = "data-raw/lads.zip"
   )
 }
 
-# LSOAs
-if (!file.exists("data/shapes/lsoas.zip")) {
-  message("Fetching shapefile(s)...")
+if (!file.exists("data-raw/lsoas.zip")) {
   download.file(
     "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
-    destfile = "data/shapes/lsoas.zip", method = "wget", mode = "wb"
+    destfile = "data-raw/lsoas.zip", method = "wget", mode = "wb"
   )
 }
 
-# Unzip...
+
+# Unzip
 if (!file.exists("data/shapes/lads/england_lad_2011_gen.shp")) {
-  unzip("data/shapes/lads.zip",    exdir = "data/shapes/lads/")
+  unzip("data-raw/lads.zip", exdir = "data-raw/lads/")
 }
 
 if (!file.exists("data/shapes/lsoas/england_lsoa_2011_gen.shp")) {
-  unzip("data/shapes/lsoas.zip",   exdir = "data/shapes/lsoa/")
+  unzip("data-raw/lsoas.zip",   exdir = "data-raw/lsoa/")
 }
 
 
-# Load LADs
+# Load shapefiles
 lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011")
 lads@data$label <- as.character(lads@data$label)
 

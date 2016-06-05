@@ -3,6 +3,8 @@
 /maps
 /shapes
 /documentation
+/data-raw/lads
+/data-raw/lsoa
 vignettes/*_cache
 .gitignore~
 .readme.md~
@@ -15,6 +17,8 @@ vignettes/*_cache
 *.jpg
 *.png
 *.qgs
+*.xlsx
+*.zip
 .Rhistory
 inst/doc
 packrat/lib*/
