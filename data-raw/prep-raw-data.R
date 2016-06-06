@@ -35,8 +35,6 @@ lads <- lads[lads@data$name == "Barnsley"  |
                lads@data$name == "Rotherham" |
                lads@data$name == "Sheffield", ]
 
-
-# LSOAs
 lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoa", "england_lsoa_2011")
 lsoa@data$code <- as.character(lsoa@data$code)
 lsoa_data <- lsoa@data
@@ -54,9 +52,10 @@ lsoa <- sp::SpatialPolygonsDataFrame(lsoa,
 lsoa@data$name <- as.character(lsoa@data$name)
 
 conds <- all(grepl("Barnsley",  lsoa@data$name) |
-               grepl("Doncaster", lsoa@data$name) |
-               grepl("Rotherham", lsoa@data$name) |
-               grepl("Sheffield", lsoa@data$name))
+             grepl("Doncaster", lsoa@data$name) |
+             grepl("Rotherham", lsoa@data$name) |
+             grepl("Sheffield", lsoa@data$name))
+
 if (!conds) {
   warning("LSOA not joined correctly (LSOA not in South Yorkshire present)")
   stop()
@@ -82,15 +81,18 @@ if (!(nrow(fp) == nrow(lsoa_data))) {
 }
 rm(lsoa_data)
 
-# Join to shapefile
+
+# Join
 lsoa@data <- dplyr::inner_join(lsoa@data, fp, by = "code")
 
 
 # Fortify shapefiles
 lads_f <- fortify(lads, region = "label")
 lads_f <- dplyr::inner_join(lads_f, lads@data, by = c("id" = "label"))
-save(lads_f, file = "data/lads.RData")
 
 lsoa_f <- fortify(lsoa, region = "code")
 lsoa_f <- dplyr::inner_join(lsoa_f, lsoa@data, by = c("id" = "code"))
+
+# Export .RData files
+save(lads_f, file = "data/lads.RData")
 save(lsoa_f, file = "data/lsoa.RData")
