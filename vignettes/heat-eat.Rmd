@@ -23,7 +23,6 @@ options(digits = 2)
 
 ```{r resources}
 library("heateat")
-library("maptools"); library("rgeos")  # needed for fortify.sp()
 library("ggplot2")
 devtools::source_gist("d1f0aa148ac9fd1cf4b3")
 ```
