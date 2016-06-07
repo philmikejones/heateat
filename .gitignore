@@ -23,8 +23,8 @@ vignettes/*_cache
 *.shx
 *.dbf
 *.prj
-inst/extdata/lads
-inst/extdata/lsoa
+extdata/lads
+extdata/lsoa
 .Rhistory
 inst/doc
 packrat/lib*/
