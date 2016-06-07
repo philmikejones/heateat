@@ -1,1 +1,1 @@
-str(lads_f)
+
