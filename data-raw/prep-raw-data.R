@@ -1,30 +1,3 @@
-# Set up the directories necessary for download.file()
-dir.create("data/shapes/lads/", recursive = TRUE, showWarnings = FALSE)
-dir.create("data/shapes/lsoa/", recursive = TRUE, showWarnings = FALSE)
-dir.create("data/raw/",         recursive = TRUE, showWarnings = FALSE)
-
-
-# Download necessary shapefiles from census.ukdataservice.ac.uk
-if (!file.exists("data-raw/lads.zip")) {
-  download.file(
-    "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lad_2011.zip",
-    mode = "wb", method = "wget", destfile = "data-raw/lads.zip"
-  )
-}
-
-if (!file.exists("data-raw/lsoas.zip")) {
-  download.file(
-    "https://census.edina.ac.uk/ukborders/easy_download/prebuilt/shape/England_lsoa_2011.zip",
-    destfile = "data-raw/lsoas.zip", method = "wget", mode = "wb"
-  )
-}
-
-
-# Unzip
-unzip("data-raw/lads.zip", exdir = "data-raw/lads/")
-unzip("data-raw/lsoas.zip",   exdir = "data-raw/lsoa/")
-
-
 # Load shapefiles
 lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011")
 lads@data$label <- as.character(lads@data$label)
@@ -62,12 +35,7 @@ if (!conds) {
 }
 
 
-# Load fuel poverty data
-if (!file.exists("data/raw/fuel-poverty.xlsx")) {
-  message("Obtaining fuel poverty data...")
-  download.file("https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/485161/2013_Sub-regional_tables.xlsx",
-                destfile = "data/raw/fuel-poverty.xlsx")
-}
+
 
 fp <- readxl::read_excel("data/raw/fuel-poverty.xlsx",
                          sheet = "Table 3", skip = 1, col_names = TRUE)

@@ -19,6 +19,10 @@ vignettes/*_cache
 *.qgs
 *.xlsx
 *.zip
+*.shp
+*.shx
+*.dbf
+*.prj
 .Rhistory
 inst/doc
 packrat/lib*/

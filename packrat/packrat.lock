@@ -110,8 +110,8 @@ Requires: Rcpp, digest
 
 Package: jsonlite
 Source: CRAN
-Version: 0.9.20
-Hash: 7c342f33735452ef1f1512af8bcca066
+Version: 0.9.21
+Hash: 4715435f79ce983ec7e041f6be4742f4
 
 Package: knitr
 Source: CRAN
