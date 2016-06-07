@@ -1,49 +1,35 @@
-# Load shapefiles
-lads <- rgdal::readOGR(dsn = "data/shapes/lads", "england_lad_2011")
+# Load LADs
+lads <- rgdal::readOGR(dsn = "extdata/lads", "england_lad_2011")
 lads@data$label <- as.character(lads@data$label)
 
-# Filter South Yorkshire
-lads <- lads[lads@data$name == "Barnsley"  |
-               lads@data$name == "Doncaster" |
-               lads@data$name == "Rotherham" |
-               lads@data$name == "Sheffield", ]
-
-lsoa <- rgdal::readOGR(dsn = "data/shapes/lsoa", "england_lsoa_2011")
+# Load LSOA
+lsoa <- rgdal::readOGR(dsn = "extdata/lsoa", "england_lsoa_2011")
 lsoa@data$code <- as.character(lsoa@data$code)
 lsoa_data <- lsoa@data
+
+# Subset/clip on Doncaster
+lads <- lads[lads@data$name == "Doncaster", ]
 
 lsoa <- lsoa[lads, ]
 lsoa <- rgeos::gIntersection(lads, lsoa, byid = TRUE, drop_lower_td = TRUE)
 
+# Recreate data frame
 row.names(lsoa) <- gsub("9 ",   "", row.names(lsoa))
-row.names(lsoa) <- gsub("214 ", "", row.names(lsoa))
-row.names(lsoa) <- gsub("297 ", "", row.names(lsoa))
-row.names(lsoa) <- gsub("320 ", "", row.names(lsoa))
-
 lsoa <- sp::SpatialPolygonsDataFrame(lsoa,
-                                     lsoa_data[row.names(lsoa_data) %in% row.names(lsoa), ])
+  lsoa_data[row.names(lsoa_data) %in% row.names(lsoa), ])
 lsoa@data$name <- as.character(lsoa@data$name)
 
-conds <- all(grepl("Barnsley",  lsoa@data$name) |
-             grepl("Doncaster", lsoa@data$name) |
-             grepl("Rotherham", lsoa@data$name) |
-             grepl("Sheffield", lsoa@data$name))
-
+conds <- all(grepl("Doncaster", lsoa@data$name))
 if (!conds) {
-  warning("LSOA not joined correctly (LSOA not in South Yorkshire present)")
+  warning("LSOA not joined correctly (LSOA not from Doncaster present)")
   stop()
 }
+rm(conds)
 
 
 # Load fuel poverty data
-if (!file.exists("data/raw/fuel-poverty.xlsx")) {
-  message("Obtaining fuel poverty data...")
-  download.file("https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/485161/2013_Sub-regional_tables.xlsx",
-                destfile = "data/raw/fuel-poverty.xlsx")
-}
-
-fp <- readxl::read_excel("data/raw/fuel-poverty.xlsx",
-                         sheet = "Table 3", skip = 1, col_names = TRUE)
+fp <- readxl::read_excel("extdata/fuel-poverty.xlsx", sheet = "Table 3",
+                         skip = 1, col_names = TRUE)
 fp <- dplyr::select(fp, 1, 6, 7, 8)
 fp <- na.omit(fp)
 colnames(fp) <- c("code", "num_hh", "num_fph", "per_fph")
