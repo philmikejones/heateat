@@ -59,6 +59,12 @@ Source: CRAN
 Version: 1.2-6
 Hash: 00bb12245cd975c450cc4a960884fa15
 
+Package: crayon
+Source: CRAN
+Version: 1.3.1
+Hash: b61d34886cf0f4b4fc4e4f52ea249390
+Requires: memoise
+
 Package: curl
 Source: CRAN
 Version: 0.9.7
@@ -202,6 +208,11 @@ Version: 1.8.3
 Hash: 7998a888024e465c15f40b078d17b5a6
 Requires: Rcpp
 
+Package: praise
+Source: CRAN
+Version: 1.0.0
+Hash: 77da8f1df873a4b91e5c4a68fe2fb1b6
+
 Package: readxl
 Source: CRAN
 Version: 0.1.1
@@ -269,6 +280,12 @@ Source: CRAN
 Version: 1.0.0
 Hash: 2676dd5f88890910962b733b0f9540e1
 Requires: magrittr, stringi
+
+Package: testthat
+Source: CRAN
+Version: 1.0.2
+Hash: 88d5291104227f9dc2e7c7c1d0eb6c74
+Requires: R6, crayon, digest, magrittr, praise
 
 Package: whisker
 Source: CRAN
