@@ -40,9 +40,13 @@ lsoa@data <- dplyr::inner_join(lsoa@data, fp, by = "code")
 # Fortify shapefiles
 lads_f <- ggplot2::fortify(lads, region = "label")
 lads_f <- dplyr::inner_join(lads_f, lads@data, by = c("id" = "label"))
+lads_f[, 8:9] <- apply(lads_f[, 8:9], 2, as.character)
+lads_f$altname <- NULL
 
 lsoa_f <- ggplot2::fortify(lsoa, region = "code")
 lsoa_f <- dplyr::inner_join(lsoa_f, lsoa@data, by = c("id" = "code"))
+lsoa_f$label <- as.character(lsoa_f$label)
+
 
 # Export .RData files
 save(lads_f, file = "data/lads.RData")
