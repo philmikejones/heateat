@@ -1,8 +1,3 @@
-# Require maptools and sp loaded into namespace for ggplot2::fortify.sp()
-require("maptools")
-require("sp")
-
-
 # Load LADs
 lads <- rgdal::readOGR(dsn = "extdata/lads", "england_lad_2011")
 lads@data$label <- as.character(lads@data$label)
@@ -38,12 +33,12 @@ lsoa@data <- dplyr::inner_join(lsoa@data, fp, by = "code")
 
 
 # Fortify shapefiles
-lads_f <- ggplot2::fortify(lads, region = "label")
+lads_f <- broom::tidy(lads, region = "label")
 lads_f <- dplyr::inner_join(lads_f, lads@data, by = c("id" = "label"))
 lads_f[, 8:9] <- apply(lads_f[, 8:9], 2, as.character)
 lads_f$altname <- NULL
 
-lsoa_f <- ggplot2::fortify(lsoa, region = "code")
+lsoa_f <- broom::tidy(lsoa, region = "code")
 lsoa_f <- dplyr::inner_join(lsoa_f, lsoa@data, by = c("id" = "code"))
 lsoa_f$label <- as.character(lsoa_f$label)
 

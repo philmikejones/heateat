@@ -4,7 +4,8 @@ Version: 0.0.1
 Authors@R: person("Phil Mike", "Jones", email = "philmikejones@gmail.com", role = c("aut", "cre"))
 Description: Analysis of 'heat or eat' poverty data in England.
 Depends:
-    R (>= 3.3.0)
+    R (>= 3.3.0),
+    maptools
 License: GPL v3
 Encoding: UTF-8
 LazyData: true
@@ -17,7 +18,6 @@ RoxygenNote: 5.0.1
 Imports: ggplot2,
     rgdal,
     rgeos,
-    maptools,
     dplyr,
     readxl,
     magrittr
