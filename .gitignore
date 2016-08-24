@@ -25,4 +25,4 @@ extdata/lads
 extdata/lsoa
 .Rhistory
 inst/doc
-packrat/lib*/
+packrat/
